@@ -88,12 +88,20 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-# include_directories(include)
+include_directories(
+    include
+)
 
 ## Declare a cpp library
-# add_library(fastdtw_cpp
-#   src/${PROJECT_NAME}/fastdtw_cpp.cpp
-# )
+add_library(fastdtw_cpp
+    include/fastdtw_cpp/dtw.hpp
+    include/fastdtw_cpp/distances.hpp
+    include/fastdtw_cpp/fastdtw.hpp
+    include/fastdtw_cpp/path.hpp
+    include/fastdtw_cpp/utils.hpp
+
+    src/fastdtw_cpp.cpp
+)
 
 ## Declare a cpp executable
 # add_executable(fastdtw_cpp_node src/fastdtw_cpp_node.cpp)
