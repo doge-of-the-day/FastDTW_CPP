@@ -10,6 +10,32 @@
 
 namespace fastdtw_cpp {
 namespace dtw {
+template<typename T>
+void trace(const T *data, const unsigned int rows, const unsigned int cols,
+           path::WarpPath<T> &path)
+{
+    unsigned int x = 0;
+    unsigned int y = 0;
+
+    while(y < rows || x < cols) {
+        int pos = y * cols + x;
+        T right = data[pos + 1];
+        T down  = data[pos + cols];
+        T diag  = data[pos + cols + 1];
+        T min   = std::min(right, std::min(diag, down));
+
+        path.push_back(x,y);
+
+        if(diag == min) {
+            ++y;
+            ++x;
+        } else if (down == min) {
+            ++y;
+        } else {
+            ++x;
+        }
+    }
+}
 
 template<typename T>
 void std(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
@@ -51,7 +77,7 @@ void std(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
 
 template<typename T>
 void std(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
-         path::WarpPath &path)
+         path::WarpPath<T> &path)
 {
     assert(signal_a.size() != 0);
     assert(signal_b.size() != 0);
@@ -86,35 +112,9 @@ void std(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
     }
 
     path.setDistance(distances[rows * cols - 1]);
-    trace(distance, rows, cols, path);
+    trace(path.getDistance(), rows, cols, path);
 }
 
-template<typename T>
-void trace(const T *data, const unsigned int rows, const unsigned int cols,
-           path::WarpPath &path)
-{
-    unsigned int x = 0;
-    unsigned int y = 0;
-
-    while(y < rows || x < cols) {
-        int pos = y * cols + x;
-        T right = data[pos + 1];
-        T down  = data[pos + cols];
-        T diag  = data[pos + cols + 1];
-        T min   = std::min(right, std::min(diag, down));
-
-        path.push_back(x,y);
-
-        if(diag == min) {
-            ++y;
-            ++x;
-        } else if (down == min) {
-            ++y;
-        } else {
-            ++x;
-        }
-    }
-}
 
 
 template<typename T>

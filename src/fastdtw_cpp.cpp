@@ -1,9 +1,14 @@
 #include <fastdtw_cpp/dtw.hpp>
 #include <fastdtw_cpp/fastdtw.hpp>
 
-void function() {
-    std::vector<float> test1;
-    float dist;
-    fastdtw_cpp::dtw::std(test1, test1, dist);
+int main(int argc, char *argv[])
+{
+    std::vector<float> test;
+    for(int i = 0 ; i < 127 ; ++i)
+        test.push_back(i);
 
+    fastdtw_cpp::utils::SignalPyramid<float,3> s(test, 2);
+    s.print();
+    return 0;
 }
+

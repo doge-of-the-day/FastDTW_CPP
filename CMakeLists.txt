@@ -6,6 +6,7 @@ project(fastdtw_cpp)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED)
 
+set(CMAKE_BUILD_TYPE Debug)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -93,7 +94,7 @@ include_directories(
 )
 
 ## Declare a cpp library
-add_library(fastdtw_cpp
+add_executable(fastdtw_cpp
     include/fastdtw_cpp/dtw.hpp
     include/fastdtw_cpp/distances.hpp
     include/fastdtw_cpp/fastdtw.hpp

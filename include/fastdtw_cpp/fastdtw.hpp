@@ -9,7 +9,7 @@ namespace fastdtw {
 template<typename T>
 void arr(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
          const unsigned int radius,
-         path::WarpPath &path)
+         path::WarpPath<T> &path)
 {
     arr_rec(signal_a, signal_b, radius, 2,  path);
 }
@@ -17,7 +17,7 @@ void arr(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
 template<typename T>
 void arr_rec(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
              const unsigned int radius, const unsigned int shrink_fac,
-             path::WarpPath &path)
+             path::WarpPath<T> &path)
 {
     assert(signal_a.size() != 0);
     assert(signal_b.size() != 0);
@@ -33,7 +33,7 @@ void arr_rec(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
         std::vector<T> shrunk_b;
         utils::shrink_static<T,2>(signal_a, shrunk_a);
         utils::shrink_static<T,2>(signal_b, shrunk_b);
-        path::WarpPath sub_path;
+        path::WarpPath<T> sub_path;
         fastdtw::arr(shrunk_a, shrunk_b, radius, sub_path);
         window(signal_a, signal_b, shrunk_a, shrunk_b, shrink_fac, sub_path);
 
