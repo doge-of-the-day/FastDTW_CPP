@@ -69,6 +69,11 @@ void shrink_static(const std::vector<T> &src, std::vector<T> &dst)
 template<typename T, unsigned int factor = 2>
 class SignalPyramid {
 public:
+    /**
+     * @brief SignalPyramid constructor.
+     * @param signal        the signal to be obtained in different scales
+     * @param min_size      the minumum size a level can have
+     */
     SignalPyramid(const std::vector<T> &signal, const unsigned int min_size) :
         level(1)
     {
@@ -97,6 +102,10 @@ public:
 
     }
 
+    /**
+     * @brief This method is to print a debug output, so it can be observed, what
+     *        signal data is in the pyramid at the moment.
+     */
     void print()
     {
         unsigned int pos = 0;
@@ -111,22 +120,34 @@ public:
         }
     }
 
-    T *levelPtr(const unsigned int i)
+    /**
+     * @brief levelPtr
+     * @param i     the level
+     * @return
+     */
+    const T* const levelPtr(const unsigned int i) const
     {
-
         return ptr_data + ptr_positions[i];
     }
 
-    unsigned int levelSize(const unsigned int i)
+    /**
+     * @brief Size of a given pyramid level.
+     * @param i     the level
+     * @return
+     */
+    unsigned int levelSize(const unsigned int i) const
     {
         return ptr_sizes[i];
     }
 
-    unsigned int levels()
+    /**
+     * @brief The amount of levels.
+     * @return
+     */
+    unsigned int levels() const
     {
         return level;
     }
-
 
 private:
     std::vector<unsigned int> positions;        /// start positions of level data

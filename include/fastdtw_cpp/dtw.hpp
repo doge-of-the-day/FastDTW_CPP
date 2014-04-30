@@ -10,6 +10,13 @@
 
 namespace fastdtw_cpp {
 namespace dtw {
+/**
+ * @brief Trace a path in a cost matrix.
+ * @param data      data ptr to the cost matrix
+ * @param rows      the width of the data matrix
+ * @param cols      the height of the data matrix
+ * @param path      the path to written to
+ */
 template<typename T>
 void trace(const T *data, const unsigned int rows, const unsigned int cols,
            path::WarpPath<T> &path)
@@ -37,6 +44,12 @@ void trace(const T *data, const unsigned int rows, const unsigned int cols,
     }
 }
 
+/**
+ * @brief Standard dtw algorithm only calculating the distance.
+ * @param signal_a      the first signal
+ * @param signal_b      the second signal
+ * @param distance      the warp distance
+ */
 template<typename T>
 void std(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
          T &distance)
@@ -75,6 +88,13 @@ void std(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
     distance = distances[rows * cols - 1];
 }
 
+/**
+ * @brief Standard dtw algorithm only calculating the distance.
+ * @param signal_a      the first signal
+ * @param signal_b      the second signal
+ * @param distance      the warp distance
+ * @param path          the warp path
+ */
 template<typename T>
 void std(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
          path::WarpPath<T> &path)
