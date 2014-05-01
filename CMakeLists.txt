@@ -99,6 +99,7 @@ add_executable(fastdtw_cpp
     include/fastdtw_cpp/distances.hpp
     include/fastdtw_cpp/fastdtw.hpp
     include/fastdtw_cpp/path.hpp
+    include/fastdtw_cpp/projection.hpp
     include/fastdtw_cpp/utils.hpp
 
     src/fastdtw_cpp.cpp
