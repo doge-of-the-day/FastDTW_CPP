@@ -88,10 +88,6 @@ public:
      * @brief WarpPath constructor.
      */
     WarpPath() :
-        anchors_x(0),
-        anchors_y(0),
-        ptr_x(anchors_x.data()),
-        ptr_y(anchors_y.data()),
         distance(std::numeric_limits<T>::max())
     {
     }
@@ -117,7 +113,7 @@ public:
     operator[] (const uint i) const {
         assert(i > -1);
         assert(i < anchors_x.size());
-        return std::make_pair(ptr_x[i], ptr_y[i]);
+        return std::make_pair(anchors_x.data()[i], anchors_y.data()[i]);
     }
 
     /**
@@ -137,9 +133,9 @@ public:
      */
     uint x(const uint i) const
     {
-        assert(i > -1);
+        assert(i >= 0);
         assert(i < anchors_x.size());
-        return ptr_x[i];
+        return anchors_x.data()[i];
     }
 
     /**
@@ -149,9 +145,9 @@ public:
      */
     uint y(const uint i) const
     {
-        assert(i > -1);
+        assert(i >= 0);
         assert(i < anchors_y.size());
-        return ptr_y[i];
+        return anchors_y.data()[i];
     }
 
     /**
@@ -160,7 +156,7 @@ public:
      */
     bool empty()
     {
-        return anchors_x.size() != 0 && anchors_y.size() != 0;
+        return anchors_x.empty() && anchors_y.empty();
     }
 
     /**
@@ -186,12 +182,22 @@ public:
         return anchors_x.size();
     }
 
+    const unsigned int* const x_ptr() const
+    {
+        return anchors_x.data();
+    }
+
+    const unsigned int* const y_ptr() const
+    {
+        return anchors_y.data();
+    }
+
 private:
     std::vector<unsigned int> anchors_x;    /// x coordinates of a path
     std::vector<unsigned int> anchors_y;    /// y coordinates of a path
 
-    unsigned int *ptr_x;                    /// fast access x pointer
-    unsigned int *ptr_y;                    /// fast access y pointer
+//    unsigned int *ptr_x;                    /// fast access x pointer
+//    unsigned int *ptr_y;                    /// fast access y pointer
     T             distance;                 /// the distance
 };
 }

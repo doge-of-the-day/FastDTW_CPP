@@ -112,6 +112,10 @@ add_executable(projection
     src/opencv.cpp
 )
 
+target_link_libraries(projection
+    ${OpenCV_LIBRARIES}
+)
+
 
 ## Declare a cpp executable
 # add_executable(fastdtw_cpp_node src/fastdtw_cpp_node.cpp)
