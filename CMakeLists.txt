@@ -6,6 +6,8 @@ project(fastdtw_cpp)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED)
 
+find_package(OpenCV REQUIRED)
+
 set(CMAKE_BUILD_TYPE Debug)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -91,6 +93,7 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
     include
+    ${OpenCV_INCLUDE_DIRS}
 )
 
 ## Declare a cpp library
@@ -104,6 +107,11 @@ add_executable(fastdtw_cpp
 
     src/fastdtw_cpp.cpp
 )
+
+add_executable(projection
+    src/opencv.cpp
+)
+
 
 ## Declare a cpp executable
 # add_executable(fastdtw_cpp_node src/fastdtw_cpp_node.cpp)

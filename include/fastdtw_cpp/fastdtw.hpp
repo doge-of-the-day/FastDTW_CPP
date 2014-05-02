@@ -10,7 +10,7 @@ namespace fastdtw {
 template<typename T>
 void pyr(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
          const unsigned int radius,
-         path::WarpPath path)
+         path::WarpPath<T> path)
 {
     /// step 1: build the pyramid
     /// step 2: eval dtw for highest level
@@ -36,8 +36,8 @@ void rec_step(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
         dtw::std(signal_a, signal_b, path);
     } else {
         std::vector<T> shrunk_a, shrunk_b;
-        utils::shrink_static<T>(signal_a, shrunk_a);
-        utils::shrink_static<T>(signal_b, shrunk_b);
+        utils::shrink_static<T,2>(signal_a, shrunk_a);
+        utils::shrink_static<T,2>(signal_b, shrunk_b);
         path::WarpPath<T> sub_path;
         rec_step(shrunk_a, shrunk_b, radius, shrink_level * 2, sub_path);
         /// project resulting path and make new search window
@@ -48,6 +48,7 @@ void rec_step(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
 }
 
 /// recursive
+template<typename T>
 void rec(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
          const unsigned int radius,
          path::WarpPath<T> &path)

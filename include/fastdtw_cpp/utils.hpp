@@ -41,7 +41,7 @@ void shrink(const std::vector<T> &src, const unsigned int factor,
  * @param factor    the factor
  * @param dst       the destination vector
  */
-template<typename T, int factor = 2>
+template<typename T, int factor>
 void shrink_static(const std::vector<T> &src, std::vector<T> &dst)
 {
     unsigned int size = src.size() / factor + ((src.size() % factor) > 0 ? 1 : 0);

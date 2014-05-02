@@ -67,7 +67,7 @@ public:
      */
     WarpAnchor get(const unsigned int i)
     {
-        return anchors.get(i);
+        return anchors.at(i);
     }
 
 private:
