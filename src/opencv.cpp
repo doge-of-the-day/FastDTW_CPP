@@ -13,41 +13,30 @@ void render(const fastdtw_cpp::path::WarpPath<float> &path, cv::Mat &image,
     }
 }
 
-template<typename T>
-void project(const fastdtw_cpp::path::WarpPath<T> &src,
-             fastdtw_cpp::path::WarpPath<T>  &dst)
-
+template<typename T, unsigned int factor>
+void project_static(const fastdtw_cpp::path::WarpPath<T> &src,
+                    fastdtw_cpp::path::WarpPath<T> &dst)
 {
+    assert(dst.empty());
     unsigned int size = src.size();
     const unsigned int *x_ptr = src.x_ptr();
     const unsigned int *y_ptr = src.y_ptr();
 
     for(unsigned int it = 0 ; it < size ; ++it) {
-        int x = src.x(it)* 2;
-        int y = src.y(it) * 2;
-        for(unsigned int i = 0 ; i < 2 ; ++i) {
-            unsigned int x_pro = x + i * 2;
-            for(unsigned int j = 0 ; j < 2 ; ++j) {
+        unsigned int x = x_ptr[it] * factor;
+        unsigned int y = y_ptr[it] * factor;
+        for(unsigned  int i = 0 ; i < factor ; ++i) {
+            unsigned int x_pro = x + i;
+            for(unsigned int j = 0 ; j < factor ; ++j) {
                 unsigned int y_pro = y + j;
                 dst.push_back(x_pro, y_pro);
             }
         }
     }
-
-
-
-//    for(unsigned int i = 0 ; i < 20 ; ++i){
-//        int x = path.x(i);
-//        int y = path.y(i);
-//        for(unsigned int i = 0 ; i < factor ; ++i) {
-//            unsigned int x_proj = x * factor + i;
-//            for(unsigned int j = 0 ; j < factor; ++j) {
-//                unsigned int y_proj = y * factor + j;
-//                projected_path.push_back(x_proj,y_proj);
 }
 
 template<typename T, unsigned int factor>
-void project_static(const fastdtw_cpp::path::WarpPath<T> &src,
+void project_refine(const fastdtw_cpp::path::WarpPath<T> &src,
                     fastdtw_cpp::path::WarpPath<T> &dst)
 {
     assert(dst.empty());
