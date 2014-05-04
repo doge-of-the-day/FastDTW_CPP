@@ -1,6 +1,7 @@
 #ifndef PROJECTION_HPP
 #define PROJECTION_HPP
 
+//#include <fastdtw_cpp/path.hpp>
 #include <vector>
 #include <assert.h>
 
@@ -18,8 +19,8 @@ public:
     {
     }
 
-    void block(const unsigned int x,
-               const unsigned int y)
+    inline void block(const unsigned int x,
+                      const unsigned int y)
     {
         unsigned int anchor_x = x * scale_;
         unsigned int anchor_y = y * scale_;
@@ -40,7 +41,8 @@ public:
 
 
     inline void diagonal(const unsigned int x,
-                  const unsigned int y)
+                         const unsigned int y,
+                         const unsigned int dia_off = 0)
     {
         unsigned int anchor_x = x * scale_;
         unsigned int anchor_y = y * scale_;
@@ -48,7 +50,7 @@ public:
         assert(anchor_x < width_);
         assert(anchor_y < height_);
 
-        for(unsigned int dia = 0 ; dia < scale_ ; ++dia) {
+        for(unsigned int dia = dia_off ; dia < scale_ ; ++dia) {
             corner(anchor_x + dia, anchor_y + dia);
         }
 
@@ -58,19 +60,19 @@ public:
                               const unsigned int y)
     {
         block(x, y);
-        diagonal(x, y);
+        diagonal(x, y, 1);
     }
 
-    bool at(const unsigned int x, const unsigned int y) const {
+    inline bool at(const unsigned int x, const unsigned int y) const {
         return data_.at(y * width_ + x);
     }
 
-    unsigned int width() const
+    inline unsigned int width() const
     {
         return width_;
     }
 
-    unsigned int height() const
+    inline unsigned int height() const
     {
         return height_;
     }
