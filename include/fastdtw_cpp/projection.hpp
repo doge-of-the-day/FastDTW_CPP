@@ -1,9 +1,7 @@
 #ifndef PROJECTION_HPP
 #define PROJECTION_HPP
 
-//#include <fastdtw_cpp/path.hpp>
-#include <vector>
-#include <assert.h>
+#include <fastdtw_cpp/path.hpp>
 
 namespace fastdtw_cpp {
 namespace projection {
@@ -17,6 +15,39 @@ public:
         scale_(_scale),
         data_(height_ * width_, false)
     {
+    }
+
+    template<typename T>
+    inline void project(const path::WarpPath<T> &path)
+    {
+        unsigned int curr_it = 0;
+        unsigned int next_it = 1;
+        bool         was_dia = false;
+        const unsigned int *x_ptr = path.x_ptr();
+        const unsigned int *y_ptr = path.y_ptr();
+
+        while(next_it < path.size()) {
+            unsigned int curr_x = x_ptr[curr_it];
+            unsigned int next_x = x_ptr[next_it];
+            unsigned int curr_y = y_ptr[curr_it];
+            unsigned int next_y = y_ptr[next_it];
+
+            if(next_x > curr_x && next_y > curr_y ){
+                if(was_dia)
+                    diagonal(curr_x, curr_y);
+                else {
+                    diagonalStart(curr_x, curr_y);
+                    was_dia = true;
+                }
+            } else {
+                block(curr_x, curr_y);
+                was_dia = false;
+            }
+
+            block(next_x, next_y);
+            ++curr_it;
+            ++next_it;
+        }
     }
 
     inline void block(const unsigned int x,

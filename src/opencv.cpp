@@ -153,34 +153,7 @@ int main(int argc, char *argv[])
     path.push_back(19,19);
 
     fastdtw_cpp::projection::Projection proj(1 + path.max_x(), 1 + path.max_y(), 2);
-    unsigned int curr_it = 0;
-    unsigned int next_it = 1;
-    bool         was_dia = false;
-    while(next_it < path.size()) {
-        unsigned int curr_x = path.x(curr_it);
-        unsigned int next_x = path.x(next_it);
-        unsigned int curr_y = path.y(curr_it);
-        unsigned int next_y = path.y(next_it);
-
-        if(next_x > curr_x && next_y > curr_y ){
-            if(was_dia)
-                proj.diagonal(curr_x, curr_y);
-            else {
-                proj.diagonalStart(curr_x, curr_y);
-                was_dia = true;
-            }
-        } else {
-            proj.block(curr_x, curr_y);
-            was_dia = false;
-        }
-
-        proj.block(next_x, next_y);
-
-        ++curr_it;
-        ++next_it;
-    }
-
-
+    proj.project(path);
 
     fastdtw_cpp::path::WarpPath<float> projected_path;
     project_static<float,2>(path, projected_path);
