@@ -6,18 +6,6 @@
 
 namespace fastdtw_cpp {
 namespace fastdtw {
-/// non-recursive
-template<typename T>
-void pyr(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
-         const unsigned int radius,
-         path::WarpPath<T> path)
-{
-    /// step 1: build the pyramid
-    /// step 2: eval dtw for highest level
-    /// step 3: project path from level to level
-    /// step 4: only evaluate projected cells of path in lower resolution
-}
-
 namespace {
 template<typename T>
 void rec_step(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
@@ -55,6 +43,18 @@ void rec(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
 {
     rec_step(signal_a, signal_b, radius, 2, path);
 }
+
+template<typename T>
+void std(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
+         const unsigned int radius,
+         path::WarpPath<T> &path)
+{
+    /// step 1: build the pyramid
+    /// step 2: eval dtw for highest level
+    /// step 3: project path from level to level
+    /// step 4: only evaluate projected cells of path in lower resolution
+}
+
 }
 }
 

@@ -192,6 +192,16 @@ public:
         return anchors_y.data();
     }
 
+    unsigned int max_x()
+    {
+        return anchors_x.back();
+    }
+
+    unsigned int max_y()
+    {
+        return anchors_y.back();
+    }
+
 private:
     std::vector<unsigned int> anchors_x;    /// x coordinates of a path
     std::vector<unsigned int> anchors_y;    /// y coordinates of a path
