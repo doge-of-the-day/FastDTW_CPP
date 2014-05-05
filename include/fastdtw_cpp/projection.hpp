@@ -36,17 +36,17 @@ public:
     inline void project(const path::WarpPath<T> &path,
                         const unsigned int radius = 0)
     {
-        unsigned int curr_it = 0;
-        unsigned int next_it = 1;
-        bool         was_dia = false;
-        const unsigned int *x_ptr = path.x_ptr();
-        const unsigned int *y_ptr = path.y_ptr();
+        unsigned int curr_it(0);
+        unsigned int next_it(1);
+        bool         was_dia(false);
+        const unsigned int *x_ptr(path.x_ptr());
+        const unsigned int *y_ptr(path.y_ptr());
 
         while(next_it < path.size()) {
-            unsigned int curr_x = x_ptr[curr_it];
-            unsigned int next_x = x_ptr[next_it];
-            unsigned int curr_y = y_ptr[curr_it];
-            unsigned int next_y = y_ptr[next_it];
+            unsigned int curr_x(x_ptr[curr_it]);
+            unsigned int next_x(x_ptr[next_it]);
+            unsigned int curr_y(y_ptr[curr_it]);
+            unsigned int next_y(y_ptr[next_it]);
 
             if(next_x > curr_x && next_y > curr_y ){
                 if(was_dia)
@@ -62,7 +62,7 @@ public:
             ++curr_it;
             ++next_it;
         }
-        unsigned int last = path.size() - 1;
+        unsigned int last(path.size() - 1);
         block(x_ptr[last], y_ptr[last], radius);
     }
 
@@ -76,18 +76,18 @@ public:
                       const unsigned int y,
                       const unsigned int radius = 0)
     {
-        unsigned int anchor_x = std::max(0, (int)(x * scale_) - (int)radius);
-        unsigned int anchor_y = std::max(0, (int)(y * scale_) - (int)radius);
+        unsigned int anchor_x(std::max(0, (int)(x * scale_) - (int)radius));
+        unsigned int anchor_y(std::max(0, (int)(y * scale_) - (int)radius));
 
         assert(anchor_x < width_);
         assert(anchor_y < height_);
 
-        unsigned int max_x = std::min(anchor_x + scale_ + radius, width_);
-        unsigned int max_y = std::min(anchor_y + scale_ + radius, height_);
+        unsigned int max_x(std::min(anchor_x + scale_ + radius, width_));
+        unsigned int max_y(std::min(anchor_y + scale_ + radius, height_));
 
-        for(unsigned int it_y = anchor_y ; it_y < max_y ; ++it_y) {
-            unsigned int pos = it_y * width_;
-            for(unsigned int it_x = anchor_x ; it_x < max_x ; ++it_x) {
+        for(unsigned int it_y(anchor_y) ; it_y < max_y ; ++it_y) {
+            unsigned int pos(it_y * width_);
+            for(unsigned int it_x(anchor_x) ; it_x < max_x ; ++it_x) {
                 data_.at(pos + it_x) = true;
             }
         }
@@ -104,13 +104,13 @@ public:
                          const unsigned int dia_off = 0,
                          const unsigned int radius = 0)
     {
-        unsigned int anchor_x = x * scale_;
-        unsigned int anchor_y = y * scale_;
+        unsigned int anchor_x(x * scale_);
+        unsigned int anchor_y(y * scale_);
 
         assert(anchor_x < width_);
         assert(anchor_y < height_);
 
-        for(unsigned int dia = dia_off ; dia < scale_ ; ++dia) {
+        for(unsigned int dia(dia_off) ; dia < scale_ ; ++dia) {
             corner(anchor_x + dia, anchor_y + dia, radius);
         }
 
@@ -169,21 +169,21 @@ private:
                        const unsigned int radius = 0)
     {
 
-        unsigned int off   = scale_ - 1;
-        unsigned int off_y = y + off;
-        unsigned int off_x = x + off;
-        unsigned int min_x = std::max(0, (int) x - (int) radius);
-        unsigned int min_y = std::max(0, (int) y - (int) radius);
-        unsigned int max_y = std::min(height_, y + scale_ - 1);
-        unsigned int max_x = std::min(width_, x + scale_);
+        unsigned int off(scale_ - 1);
+        unsigned int off_y(y + off);
+        unsigned int off_x(x + off);
+        unsigned int min_x(std::max(0, (int) x - (int) radius));
+        unsigned int min_y(std::max(0, (int) y - (int) radius));
+        unsigned int max_y(std::min(height_, y + scale_ - 1));
+        unsigned int max_x(std::min(width_, x + scale_));
 
         if(off_x < width_)
-            for(unsigned it_y = min_y ; it_y < max_y; ++it_y)
+            for(unsigned it_y(min_y) ; it_y < max_y; ++it_y)
                 data_.at(it_y * width_ + off_x) = true;
 
         if(off_y < height_) {
-            unsigned int pos = off_y * width_;
-            for(unsigned it_x = min_x ; it_x < max_x; ++it_x)
+            unsigned int pos(off_y * width_);
+            for(unsigned it_x(min_x) ; it_x < max_x; ++it_x)
                 data_.at(pos + it_x) = true;
         }
     }

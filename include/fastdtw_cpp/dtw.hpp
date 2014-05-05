@@ -21,15 +21,15 @@ template<typename T>
 void trace(const T *data, const unsigned int rows, const unsigned int cols,
            path::WarpPath<T> &path)
 {
-    unsigned int x = 0;
-    unsigned int y = 0;
+    unsigned int x(0);
+    unsigned int y(0);
 
     while(y < rows || x < cols) {
-        int pos = y * cols + x;
-        T right = data[pos + 1];
-        T down  = data[pos + cols];
-        T diag  = data[pos + cols + 1];
-        T min   = std::min(right, std::min(diag, down));
+        int pos(y * cols + x);
+        T right(data[pos + 1]);
+        T down (data[pos + cols]);
+        T diag (data[pos + cols + 1]);
+        T min  (std::min(right, std::min(diag, down)));
 
         path.push_back(x,y);
 
@@ -58,8 +58,8 @@ void std(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
     assert(signal_b.size() != 0);
     /// signal_a is rows
     /// signal_b is cols
-    unsigned int rows = signal_a.size() + 1;
-    unsigned int cols = signal_b.size() + 1;
+    unsigned int rows(signal_a.size() + 1);
+    unsigned int cols(signal_b.size() + 1);
     T distances[rows * cols];
 
     for(unsigned int i = 1 ; i < rows ; ++i)
@@ -69,8 +69,8 @@ void std(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
 
     distances[0] = 0.f;
 
-    const T *siga_ptr = signal_a.data();
-    const T *sigb_ptr = signal_b.data();
+    const T *siga_ptr(signal_a.data());
+    const T *sigb_ptr(signal_b.data());
 
     for(unsigned int i = 1 ; i < rows ; ++i) {
         int i_min((i - 1) * cols);
@@ -104,24 +104,24 @@ void std(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
     assert(path.empty());
     /// signal_a is rows
     /// signal_b is cols
-    unsigned int rows = signal_a.size() + 1;
-    unsigned int cols = signal_b.size() + 1;
+    unsigned int rows(signal_a.size() + 1);
+    unsigned int cols(signal_b.size() + 1);
     T distances[rows * cols];
 
-    for(unsigned int i = 1 ; i < rows ; ++i)
+    for(unsigned int i(1) ; i < rows ; ++i)
         distances[i * cols] = std::numeric_limits<T>::infinity();
-    for(unsigned int j = 1 ; j < cols ; ++j)
+    for(unsigned int j(1) ; j < cols ; ++j)
         distances[j] = std::numeric_limits<T>::infinity();
 
     distances[0] = 0.f;
 
-    const T *siga_ptr = signal_a.data();
-    const T *sigb_ptr = signal_b.data();
+    const T *siga_ptr(signal_a.data());
+    const T *sigb_ptr(signal_b.data());
 
-    for(unsigned int i = 1 ; i < rows ; ++i) {
+    for(unsigned int i(1) ; i < rows ; ++i) {
         int i_min((i - 1) * cols);
 
-        for(unsigned int j = 1 ; j < cols ; ++j) {
+        for(unsigned int j(1) ; j < cols ; ++j) {
             int   j_min     (j - 1);
             T cost      (distances::def_distance(siga_ptr[i], sigb_ptr[j]));
             T insertion (distances[i_min  + j]);
@@ -144,18 +144,18 @@ void loc(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
     assert(signal_b.size() != 0);
     /// signal_a is rows
     /// signal_b is cols
-    int rows = signal_a.size() + 1;
-    int cols = signal_b.size() + 1;
+    int rows(signal_a.size() + 1);
+    int cols(signal_b.size() + 1);
     std::vector<T> distances;
     distances.resize(rows * cols, std::numeric_limits<T>::infinity());
 
-    T *dist_ptr = distances.data();
+    T *dist_ptr(distances.data());
     dist_ptr[0] = 0.f;
 
-    int w = std::max(adapt_window, (const int) std::abs(cols - rows));
+    int w(std::max(adapt_window, (const int) std::abs(cols - rows)));
 
-    const T *siga_ptr = signal_a.data();
-    const T *sigb_ptr = signal_b.data();
+    const T *siga_ptr(signal_a.data());
+    const T *sigb_ptr(signal_b.data());
 
     for(int i = 1 ; i < rows ; ++i) {
         int i_min(i - 1);

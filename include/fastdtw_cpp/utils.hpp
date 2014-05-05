@@ -19,13 +19,13 @@ void shrink(const std::vector<T> &src, const unsigned int factor,
 {
     unsigned int size = src.size() / factor + ((src.size() % factor) > 0 ? 1 : 0);
     T tmp[size];
-    typename std::vector<T>::const_iterator it = src.begin();
-    typename std::vector<T>::const_iterator end = src.end();
-    unsigned int pos = 0;
+    typename std::vector<T>::const_iterator it(src.begin());
+    typename std::vector<T>::const_iterator end(src.end());
+    unsigned int pos(0);
     while(it != end) {
-        T acc = 0;
+        T acc(0);
         unsigned int normalize(0);
-        for(unsigned int i = 0 ; i < factor && it != end ; ++i, ++it) {
+        for(unsigned int i(0) ; i < factor && it != end ; ++i, ++it) {
             acc += *it;
         }
         tmp[pos] = acc / (double) normalize;
@@ -44,15 +44,15 @@ void shrink(const std::vector<T> &src, const unsigned int factor,
 template<typename T, int factor>
 void shrink_static(const std::vector<T> &src, std::vector<T> &dst)
 {
-    unsigned int size = src.size() / factor + ((src.size() % factor) > 0 ? 1 : 0);
+    unsigned int size(src.size() / factor + ((src.size() % factor) > 0 ? 1 : 0));
     T tmp[size];
-    typename std::vector<T>::const_iterator it = src.begin();
-    typename std::vector<T>::const_iterator end = src.end();
-    unsigned int pos = 0;
+    typename std::vector<T>::const_iterator it(src.begin());
+    typename std::vector<T>::const_iterator end(src.end());
+    unsigned int pos(0);
     while(it != end) {
-        T acc = 0;
+        T acc(0);
         unsigned int normalize(0);
-        for(unsigned int i = 0 ; i < factor && it != end ; ++i, ++it) {
+        for(unsigned int i(0) ; i < factor && it != end ; ++i, ++it) {
             acc += *it;
             ++normalize;
         }
@@ -161,10 +161,10 @@ private:
     void buildLevel(unsigned int i)
     {
         assert(i > 0);
-        T *ptr_old_entry = ptr_data + ptr_positions[i-1];
-        T *ptr_new_entry = ptr_data + ptr_positions[i];
-        unsigned int iterations = ptr_sizes[i-1];
-        unsigned int it = 0;
+        T *ptr_old_entry(ptr_data + ptr_positions[i-1]);
+        T *ptr_new_entry(ptr_data + ptr_positions[i]);
+        unsigned int iterations(ptr_sizes[i-1]);
+        unsigned int it(0);
 
         while(it < iterations) {
             T acc(0);
