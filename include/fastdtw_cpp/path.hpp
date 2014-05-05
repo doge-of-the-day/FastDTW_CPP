@@ -4,6 +4,7 @@
 #include <vector>
 #include <assert.h>
 #include <limits>
+#include <iostream>
 
 namespace fastdtw_cpp {
 namespace path {
@@ -200,6 +201,15 @@ public:
     unsigned int max_y()
     {
         return anchors_y.back();
+    }
+
+    void print()
+    {
+        for(unsigned int i = 0 ; i < anchors_x.size() ; ++i) {
+            std::cout << "(" << anchors_x.at(i) << ","
+                      << anchors_y.at(i) << ")" << std::endl;
+
+        }
     }
 
 private:
