@@ -20,18 +20,18 @@ int main(int argc, char *argv[])
 
     fastdtw_cpp::path::WarpPath<float> path;
     float distance = 0;
-//    std::vector<bool> mask(128 * 128, true);
-    fastdtw_cpp::dtw::std(test, test2, path);
+    std::vector<bool> mask(128 * 128, true);
+    fastdtw_cpp::dtw::std(test, test2, mask, path);
     fastdtw_cpp::dtw::std(test, test2, distance);
     std::cout << distance << std::endl;
 
     std::cout << path.getDistance() << std::endl;
 
-//    fastdtw_cpp::path::WarpPath<float> path2;
-//    fastdtw_cpp::fastdtw::std(test, test2, 60, path2);
-//    std::cout << path2.getDistance() << std::endl;
+    fastdtw_cpp::path::WarpPath<float> path2;
+    fastdtw_cpp::fastdtw::std(test, test2, 10, path2);
+    std::cout << path2.getDistance() << std::endl;
 
-    path.print();
+//    path.print();
 //    std::cout << path.getDistance() << std::endl;
 //    std::cout << " --- " << std::endl;
 //    path2.print();
