@@ -3,55 +3,43 @@
 
 #include "dtw.hpp"
 #include "utils.hpp"
+#include "projection.hpp"
 
 namespace fastdtw_cpp {
 namespace fastdtw {
-namespace {
-template<typename T>
-void rec_step(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
-              const unsigned int radius, const unsigned int shrink_level,
-              path::WarpPath<T> &path)
-{
-    assert(signal_a.size() != 0);
-    assert(signal_b.size() != 0);
-    /// signal_a is rows
-    /// signal_b is cols
-    unsigned int min_coarsest_res = radius + 2;
-    unsigned int size_a = signal_a.size();
-    unsigned int size_b = signal_b.size();
-
-    if(size_a < min_coarsest_res || size_b < min_coarsest_res) {
-        dtw::std(signal_a, signal_b, path);
-    } else {
-        std::vector<T> shrunk_a, shrunk_b;
-        utils::shrink_static<T,2>(signal_a, shrunk_a);
-        utils::shrink_static<T,2>(signal_b, shrunk_b);
-        path::WarpPath<T> sub_path;
-        rec_step(shrunk_a, shrunk_b, radius, shrink_level * 2, sub_path);
-        /// project resulting path and make new search window
-        /// search by evaluating the projected cells
-    }
-
-}
-}
-
-/// recursive
-template<typename T>
-void rec(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
-         const unsigned int radius,
-         path::WarpPath<T> &path)
-{
-    rec_step(signal_a, signal_b, radius, 2, path);
-}
 
 template<typename T>
 void std(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
          const unsigned int radius,
          path::WarpPath<T> &path)
 {
+    /// signal_a is rows
+    /// signal_b is cols
     /// step 1: build the pyramid
-    /// step 2: eval dtw for highest level
+    unsigned int min_size(radius + 2);
+    utils::SignalPyramid<T, 2> pyr_a(signal_a, min_size);
+    utils::SignalPyramid<T, 2> pyr_b(signal_b, min_size);
+
+    /// step 2: eval dtw for lowest resolution level
+    unsigned int last(std::min(pyr_a.levels(), pyr_b.levels())
+                      - 1);
+    std::vector<T> level_a(pyr_a.getLevel(last));
+    std::vector<T> level_b(pyr_b.getLevel(last));
+    path::WarpPath<T> sub_path;
+    dtw::std(level_a, level_b, sub_path);
+
     /// step 3: project path from level to level
+    --last;
+    for(int i(last) ; last > -1 ; --i) {
+        /// project last path to current level
+        projection::Projection p(level_a.size(), level_b.size(), 2);
+        p.project(sub_path, radius);
+        /// get current signals
+        level_a = pyr_a.getLevel(i);
+        level_b = pyr_b.getLevel(i);
+        dtw::std(level_a, level_b, p.data(), sub_path);
+    }
+    path = sub_path;
     /// step 4: only evaluate projected cells of path in lower resolution
 }
 

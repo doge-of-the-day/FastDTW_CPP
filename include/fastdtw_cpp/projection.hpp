@@ -82,8 +82,8 @@ public:
         assert(anchor_x < width_);
         assert(anchor_y < height_);
 
-        unsigned int max_x(std::min(anchor_x + scale_ + radius, width_));
-        unsigned int max_y(std::min(anchor_y + scale_ + radius, height_));
+        unsigned int max_x(std::min(anchor_x + scale_ + radius + 1, width_));
+        unsigned int max_y(std::min(anchor_y + scale_ + radius + 1, height_));
 
         for(unsigned int it_y(anchor_y) ; it_y < max_y ; ++it_y) {
             unsigned int pos(it_y * width_);
@@ -156,6 +156,11 @@ public:
     inline unsigned int height() const
     {
         return height_;
+    }
+
+    inline const std::vector<bool>& data() const
+    {
+        return data_;
     }
 
 private:

@@ -135,6 +135,47 @@ void std(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
     trace(path.getDistance(), rows, cols, path);
 }
 
+template<typename T>
+void std(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
+         const std::vector<bool> mask,
+         path::WarpPath<T> &path)
+{
+    assert(signal_a.size() != 0);
+    assert(signal_b.size() != 0);
+    assert(path.empty());
+    /// signal_a is rows
+    /// signal_b is cols
+    unsigned int cols_mask(signal_b.size());
+    unsigned int rows_distances(signal_a.size() + 1);
+    unsigned int cols_distances(cols_mask + 1);
+
+    std::vector<T> distances(rows_distances * cols_distances, std::numeric_limits<T>::infinity());
+    T *distances_ptr = distances.data();
+    distances_ptr[0] = 0.f;
+
+    const T *siga_ptr(signal_a.data());
+    const T *sigb_ptr(signal_b.data());
+    for(unsigned int i(1) ; i < rows_distances ; ++i) {
+        int i_min(i - 1);
+        int pos(i_min * cols_distances);
+
+        for(unsigned int j(1) ; j < cols_distances ; ++j) {
+            int j_min (j - 1);
+            if(mask.at(i_min * cols_mask + j_min)) {
+                T cost      (distances::def_distance(siga_ptr[i], sigb_ptr[j]));
+                T insertion (distances_ptr[pos  + j]);
+                T deletion  (distances_ptr[pos + cols_distances + j_min]);
+                T match     (distances_ptr[pos + j_min]);
+                distances_ptr[pos + cols_distances + j] = cost + std::min(insertion, std::min(deletion, match));
+            }
+        }
+    }
+
+    path.setDistance(distances_ptr[rows_distances * cols_distances - 1]);
+    trace(path.getDistance(), rows_distances, cols_distances, path);
+}
+
+
 
 
 template<typename T>

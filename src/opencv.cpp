@@ -46,19 +46,15 @@ int main(int argc, char *argv[])
     images.push_back(cv::Mat(40,40, CV_8UC1, cv::Scalar::all(0)));
 
     fastdtw_cpp::path::WarpPath<float> path;
-//    path.push_back(0,0);
-//    path.push_back(0,1);
-//    for(unsigned int i = 2 ; i < 19 ; ++i)
-//        path.push_back(i-1,i);
-//    path.push_back(18,19);
-//    path.push_back(19,19);
-        for(unsigned int i = 0 ; i < 20 ; ++i)
-            path.push_back(i,i);
-
-
+    path.push_back(0,0);
+    path.push_back(0,1);
+    for(unsigned int i = 2 ; i < 19 ; ++i)
+        path.push_back(i-1,i);
+    path.push_back(18,19);
+    path.push_back(19,19);
 
     fastdtw_cpp::projection::Projection proj(1 + path.max_x(), 1 + path.max_y(), 2);
-    proj.project(path, 1);
+    proj.project(path, 2);
 
     fastdtw_cpp::path::WarpPath<float> projected_path;
     project_static<float,2>(path, projected_path);

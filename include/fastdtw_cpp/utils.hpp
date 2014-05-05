@@ -140,6 +140,14 @@ public:
         return ptr_sizes[i];
     }
 
+    std::vector<T> getLevel(const unsigned int i) const
+    {
+        std::vector<T> tmp;
+        T* pos = ptr_data + ptr_positions[i];
+        tmp.assign(pos, pos + ptr_sizes[i]);
+        return tmp;
+    }
+
     /**
      * @brief The amount of levels.
      * @return
@@ -148,6 +156,8 @@ public:
     {
         return level;
     }
+
+
 
 private:
     std::vector<unsigned int> positions;        /// start positions of level data
