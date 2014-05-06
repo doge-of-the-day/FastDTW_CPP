@@ -75,28 +75,28 @@ public:
      * @param min_size      the minumum size a level can have
      */
     SignalPyramid(const std::vector<T> &signal, const unsigned int min_size) :
-        level(1)
+        level_(1)
     {
-        positions.push_back(0);
-        sizes.push_back(signal.size());
+        positions_.push_back(0);
+        sizes_.push_back(signal.size());
 
         unsigned int size(signal.size());
         unsigned int data_size(size);
         while(size > min_size) {
             size = size / factor + (size % factor > 0 ? 1 : 0);
             data_size += size;
-            positions.push_back(positions.back() + sizes.back());
-            sizes.push_back(size);
-            ++level;
+            positions_.push_back(positions_.back() + sizes_.back());
+            sizes_.push_back(size);
+            ++level_;
         }
 
-        data.resize(data_size);
-        std::copy(signal.begin(), signal.end(), data.begin());
-        ptr_positions = positions.data();
-        ptr_sizes = sizes.data();
-        ptr_data  = data.data();
+        data_.resize(data_size);
+        std::copy(signal.begin(), signal.end(), data_.begin());
+        ptr_positions_ = positions_.data();
+        ptr_sizes_ = sizes_.data();
+        ptr_data_  = data_.data();
 
-        for(unsigned int i = 1 ; i < level ; ++i) {
+        for(unsigned int i = 1 ; i < level_ ; ++i) {
             buildLevel(i);
         }
 
@@ -109,10 +109,10 @@ public:
     void print()
     {
         unsigned int pos = 0;
-        for(std::vector<unsigned int>::iterator it = sizes.begin() ; it != sizes.end() ; ++it)
+        for(std::vector<unsigned int>::iterator it = sizes_.begin() ; it != sizes_.end() ; ++it)
         {
             for(int i = 0 ; i < *it ; ++i) {
-                std::cout << " " << data.at(pos);
+                std::cout << " " << data_.at(pos);
                 ++pos;
             }
             std::cout << std::endl;
@@ -127,7 +127,7 @@ public:
      */
     const T* const levelPtr(const unsigned int i) const
     {
-        return ptr_data + ptr_positions[i];
+        return ptr_data_ + ptr_positions_[i];
     }
 
     /**
@@ -137,14 +137,14 @@ public:
      */
     unsigned int levelSize(const unsigned int i) const
     {
-        return ptr_sizes[i];
+        return ptr_sizes_[i];
     }
 
     std::vector<T> getLevel(const unsigned int i) const
     {
         std::vector<T> tmp;
-        T* pos = ptr_data + ptr_positions[i];
-        tmp.assign(pos, pos + ptr_sizes[i]);
+        T* pos = ptr_data_ + ptr_positions_[i];
+        tmp.assign(pos, pos + ptr_sizes_[i]);
         return tmp;
     }
 
@@ -154,26 +154,26 @@ public:
      */
     unsigned int levels() const
     {
-        return level;
+        return level_;
     }
 
 
 
 private:
-    std::vector<unsigned int> positions;        /// start positions of level data
-    std::vector<unsigned int> sizes;            /// the level data sizes
-    std::vector<T>            data;             /// the data
-    unsigned int             *ptr_positions;    /// fast access pointer to positions
-    unsigned int             *ptr_sizes;        /// fast access pointer to sizes
-    T                        *ptr_data;         /// fast access pointer to data
-    unsigned int              level;
+    std::vector<unsigned int> positions_;        /// start positions of level data
+    std::vector<unsigned int> sizes_;            /// the level data sizes
+    std::vector<T>            data_;             /// the data
+    unsigned int             *ptr_positions_;    /// fast access pointer to positions
+    unsigned int             *ptr_sizes_;        /// fast access pointer to sizes
+    T                        *ptr_data_;         /// fast access pointer to data
+    unsigned int              level_;
 
     void buildLevel(unsigned int i)
     {
         assert(i > 0);
-        T *ptr_old_entry(ptr_data + ptr_positions[i-1]);
-        T *ptr_new_entry(ptr_data + ptr_positions[i]);
-        unsigned int iterations(ptr_sizes[i-1]);
+        T *ptr_old_entry(ptr_data_ + ptr_positions_[i-1]);
+        T *ptr_new_entry(ptr_data_ + ptr_positions_[i]);
+        unsigned int iterations(ptr_sizes_[i-1]);
         unsigned int it(0);
 
         while(it < iterations) {

@@ -9,73 +9,6 @@
 namespace fastdtw_cpp {
 namespace path {
 /**
- * @brief The WarpAnchor struct represents an anchor in an warp path.
- */
-struct WarpAnchor {
-    /**
-     * @brief WarpAnchor constructor.
-     * @param _x        the x coordinate
-     * @param _y        the y coordinate
-     */
-    WarpAnchor(const unsigned int _x,
-               const unsigned int _y) :
-        x(_x),
-        y(_y)
-    {
-    }
-
-    unsigned int x; /// the x coordinate
-    unsigned int y; /// the y coordinate
-};
-
-/**
- * @brief The WarpAnchorPath class can be used as a
- *        simplier representation of a warp path.
- */
-class WarpAnchorPath {
-public:
-    /**
-     * @brief Push an anchor to the path.
-     * @param x     the x coordinate
-     * @param y     the y coordinate
-     */
-    void push_back(const unsigned int x, const unsigned int y)
-    {
-        anchors.push_back(WarpAnchor(x,y));
-    }
-
-    /**
-     * @brief Directly push an anchor.
-     * @param anchor the anchor to push
-     */
-    void push_back(const WarpAnchor &anchor)
-    {
-        anchors.push_back(anchor);
-    }
-
-    /**
-     * @brief Clear the warp path.
-     */
-    void clear()
-    {
-        anchors.clear();
-    }
-
-    /**
-     * @brief Get the i-th entry of the path.
-     * @param i     the indicator for the i-th entry
-     * @return      the i-th entry
-     */
-    WarpAnchor get(const unsigned int i)
-    {
-        return anchors.at(i);
-    }
-
-private:
-    std::vector<WarpAnchor> anchors;    /// the anchors
-};
-
-/**
  * @brief The WarpPath class represents a warp path through a cost matrix
  *        calculated by a dtw algorithm.
  */
@@ -89,7 +22,7 @@ public:
      * @brief WarpPath constructor.
      */
     WarpPath() :
-        distance(std::numeric_limits<T>::max())
+        distance_(std::numeric_limits<T>::max())
     {
     }
 
@@ -100,8 +33,8 @@ public:
      */
     void push_back(const unsigned int x, const unsigned int y)
     {
-        anchors_x.push_back(x);
-        anchors_y.push_back(y);
+        anchors_x_.push_back(x);
+        anchors_y_.push_back(y);
     }
 
     /**
@@ -113,8 +46,8 @@ public:
     std::pair<uint, uint>
     operator[] (const uint i) const {
         assert(i > -1);
-        assert(i < anchors_x.size());
-        return std::make_pair(anchors_x.data()[i], anchors_y.data()[i]);
+        assert(i < anchors_x_.size());
+        return std::make_pair(anchors_x_.data()[i], anchors_y_.data()[i]);
     }
 
     /**
@@ -124,40 +57,40 @@ public:
      */
     std::pair<uint, uint>
     at(const uint i) const {
-        return std::make_pair(anchors_x.at(i), anchors_y.at(i));
+        return std::make_pair(anchors_x_.at(i), anchors_y_.at(i));
     }
 
     /**
      * @brief Get the i-th x coordinate in the path.
      * @param i     indicator for the i-th entry
-     * @return
+     * @return      the i-th x entry
      */
     uint x(const uint i) const
     {
         assert(i >= 0);
-        assert(i < anchors_x.size());
-        return anchors_x.data()[i];
+        assert(i < anchors_x_.size());
+        return anchors_x_.data()[i];
     }
 
     /**
      * @brief Get the i-th y coordinate in the path.
-     * @param i
-     * @return
+     * @param i     indicator for the i-th entry
+     * @return      the i-th y entry
      */
     uint y(const uint i) const
     {
         assert(i >= 0);
-        assert(i < anchors_y.size());
-        return anchors_y.data()[i];
+        assert(i < anchors_y_.size());
+        return anchors_y_.data()[i];
     }
 
     /**
      * @brief Check wether the path is empty or not.
-     * @return
+     * @return      true if empty
      */
     bool empty()
     {
-        return anchors_x.empty() && anchors_y.empty();
+        return anchors_x_.empty() && anchors_y_.empty();
     }
 
     /**
@@ -166,16 +99,16 @@ public:
      */
     void setDistance(const T _distance)
     {
-        distance = _distance;
+        distance_ = _distance;
     }
 
     /**
      * @brief Get the distance value of the path.
-     * @return  the distance
+     * @return      the distance
      */
     T getDistance() const
     {
-        return distance;
+        return distance_;
     }
 
     /**
@@ -184,49 +117,62 @@ public:
      */
     unsigned int size() const
     {
-        return anchors_x.size();
+        return anchors_x_.size();
     }
 
     /**
-     * @brief x_ptr
-     * @return
+     * @brief Return the x data ptr for fast access.
+     * @return      const ptr to the x data array / vector
      */
     const unsigned int* const x_ptr() const
     {
-        return anchors_x.data();
+        return anchors_x_.data();
     }
 
+    /**
+     * @brief Return the y data ptr for fast access.
+     * @return      const ptr to the x data array / vector
+     */
     const unsigned int* const y_ptr() const
     {
-        return anchors_y.data();
+        return anchors_y_.data();
     }
 
-    unsigned int max_x()
+    /**
+     * @brief Return the back entry of the x vector.
+     * @return      the back of the x coordinates vector
+     */
+    unsigned int back_x()
     {
-        return anchors_x.back();
+        return anchors_x_.back();
     }
 
-    unsigned int max_y()
+    /**
+     * @brief Return the back entry of the x vector.
+     * @return      the back of the y coordinates vector
+     */
+    unsigned int back_y()
     {
-        return anchors_y.back();
+        return anchors_y_.back();
     }
 
+    /**
+     * @brief Print out the coordinates of the path for debug
+     *        output.
+     */
     void print()
     {
-        for(unsigned int i = 0 ; i < anchors_x.size() ; ++i) {
-            std::cout << "(" << anchors_x.at(i) << ","
-                      << anchors_y.at(i) << ")" << std::endl;
+        for(unsigned int i = 0 ; i < anchors_x_.size() ; ++i) {
+            std::cout << "(" << anchors_x_.at(i) << ","
+                      << anchors_y_.at(i) << ")" << std::endl;
 
         }
     }
 
 private:
-    std::vector<unsigned int> anchors_x;    /// x coordinates of a path
-    std::vector<unsigned int> anchors_y;    /// y coordinates of a path
-
-//    unsigned int *ptr_x;                  /// fast access x pointer
-//    unsigned int *ptr_y;                  /// fast access y pointer
-    T             distance;                 /// the distance
+    std::vector<unsigned int> anchors_x_;    /// x coordinates of a path
+    std::vector<unsigned int> anchors_y_;    /// y coordinates of a path
+    T                         distance_;     /// the distance
 };
 }
 }

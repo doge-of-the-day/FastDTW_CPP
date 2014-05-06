@@ -6,15 +6,18 @@ project(fastdtw_cpp)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED)
 
-find_package(OpenCV REQUIRED)
+set(CMAKE_BUILD_TYPE Release)
+set(FAST_DTW_FLAGS "-O3 -fprefetch-loop-arrays -ffast-math -fforce-addr -falign-functions=4 -funroll-loops -march=core2")
+set(CMAKE_CXX_FLAGS_RELEASE ${FAST_DTW_FLAGS})
 
-set(CMAKE_BUILD_TYPE Debug)
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES fastdtw_cpp
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
 )
+
+
 
 #### TODO : REMOVE BUILD ####
 
@@ -26,7 +29,6 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
     include
-    ${OpenCV_INCLUDE_DIRS}
 )
 
 ## Declare a cpp library
@@ -39,12 +41,4 @@ add_executable(fastdtw_cpp
     include/fastdtw_cpp/utils.hpp
 
     src/fastdtw_cpp.cpp
-)
-
-add_executable(projection
-    src/opencv.cpp
-)
-
-target_link_libraries(projection
-    ${OpenCV_LIBRARIES}
 )

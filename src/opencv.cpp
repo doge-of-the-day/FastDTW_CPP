@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
     path.push_back(18,19);
     path.push_back(19,19);
 
-    fastdtw_cpp::projection::Projection proj(1 + path.max_x(), 1 + path.max_y(), 2);
+    fastdtw_cpp::projection::Projection proj(1 + path.back_x(), 1 + path.back_y(), 2);
     proj.project(path, 2);
 
     fastdtw_cpp::path::WarpPath<float> projected_path;
