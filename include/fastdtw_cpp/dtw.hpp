@@ -18,7 +18,9 @@ namespace dtw {
  * @param path      the path to written to
  */
 template<typename T>
-void trace(const T *data, const unsigned int rows, const unsigned int cols,
+void trace(const T *data,
+           const unsigned int rows,
+           const unsigned int cols,
            path::WarpPath<T> &path)
 {
     unsigned int x(0);
@@ -59,8 +61,9 @@ void trace(const T *data, const unsigned int rows, const unsigned int cols,
  * @param distance      the warp distance
  */
 template<typename T>
-void std(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
-         T &distance)
+void apply(const std::vector<T> &signal_a,
+           const std::vector<T> &signal_b,
+           T &distance)
 {
     assert(signal_a.size() != 0);
     assert(signal_b.size() != 0);
@@ -89,7 +92,8 @@ void std(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
             T insertion (distances[pos_y + x + 1]);
             T deletion  (distances[pos_y + cols + x]);
             T match     (distances[pos_y + x]);
-            distances[pos_y + cols + x + 1] = cost + std::min(insertion, std::min(deletion, match));
+            distances[pos_y + cols + x + 1] =
+                    cost + std::min(insertion, std::min(deletion, match));
 
         }
     }
@@ -103,8 +107,8 @@ void std(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
  * @param path          the warp path
  */
 template<typename T>
-void std(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
-         path::WarpPath<T> &path)
+void apply(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
+           path::WarpPath<T> &path)
 {
     assert(signal_a.size() != 0);
     assert(signal_b.size() != 0);
@@ -141,10 +145,18 @@ void std(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
     trace(distances, rows, cols, path);
 }
 
+/**
+ * @brief Apply the dtw using arrays and element counts.
+ * @param signal_a      first signal array
+ * @param size_a        size of first signal array
+ * @param signal_b      second signal array
+ * @param size_b        size of second signal array
+ * @param path          the resulting path
+ */
 template<typename T>
-void std(const T* signal_a, const unsigned int size_a,
-         const T* signal_b, const unsigned int size_b,
-         path::WarpPath<T> &path)
+void apply(const T* signal_a, const unsigned int size_a,
+           const T* signal_b, const unsigned int size_b,
+           path::WarpPath<T> &path)
 {
     assert(size_a != 0);
     assert(size_b != 0);
@@ -178,11 +190,20 @@ void std(const T* signal_a, const unsigned int size_a,
     trace(distances, rows, cols, path);
 }
 
+/**
+ * @brief Apply the dtw using arrays and element counts and mask.
+ * @param signal_a      first signal array
+ * @param size_a        size of first signal array
+ * @param signal_b      second signal array
+ * @param size_b        size of second signal array
+ * @param mask          the mask for leaving out the update for certain cells
+ * @param path          the resulting path
+ */
 template<typename T>
-void std(const T* signal_a, const unsigned int size_a,
-         const T* signal_b, const unsigned int size_b,
-         const std::vector<bool> &mask,
-         path::WarpPath<T> &path)
+void apply(const T* signal_a, const unsigned int size_a,
+           const T* signal_b, const unsigned int size_b,
+           const std::vector<bool> &mask,
+           path::WarpPath<T> &path)
 {
     assert(size_a != 0);
     assert(size_b != 0);
@@ -219,10 +240,18 @@ void std(const T* signal_a, const unsigned int size_a,
 
 
 
+/**
+ * @brief Apply the normal dtw using vectors and given a mask.
+ * @param signal_a      the first signal
+ * @param signal_b      the second signal
+ * @param mask          the mask to leave out updates
+ * @param path          the resulting path
+ */
 template<typename T>
-void std(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
-         const std::vector<bool> &mask,
-         path::WarpPath<T> &path)
+void apply(const std::vector<T> &signal_a,
+           const std::vector<T> &signal_b,
+           const std::vector<bool> &mask,
+           path::WarpPath<T> &path)
 {
     assert(signal_a.size() != 0);
     assert(signal_b.size() != 0);

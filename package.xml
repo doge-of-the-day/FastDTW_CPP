@@ -2,18 +2,15 @@
 <package>
   <name>fastdtw_cpp</name>
   <version>0.0.1</version>
-  <description>The fastdtw_cpp package</description>
+  <description>
+    FastDTW (fast dynamic time warping) template library for C++ programs.
+    Based on the publication:
+        "FastDTW: Toward Accurate Dynamic Time Warping in Linear Time and Space -
+                  Stand Salvador,Philip Chan"
+  </description>
   <maintainer email="richard.hanten@uni-tuebingen.de">Richard Hanten</maintainer>
-  <license>MIT</license>
+  <license>BSD</license>
   <buildtool_depend>catkin</buildtool_depend>
-
-
-  <!-- The export tag contains other, unspecified, tags -->
   <export>
-    <!-- You can specify that this package is a metapackage here: -->
-    <!-- <metapackage/> -->
-
-    <!-- Other tools can request additional information be placed here -->
-
   </export>
 </package>

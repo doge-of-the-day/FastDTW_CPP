@@ -21,38 +21,15 @@ int main(int argc, char *argv[])
     fastdtw_cpp::path::WarpPath<float> path;
     float distance = 0;
     std::vector<bool> mask(128 * 128, true);
-    fastdtw_cpp::dtw::std(test, test2, mask, path);
-    fastdtw_cpp::dtw::std(test, test2, distance);
+    fastdtw_cpp::dtw::apply(test, test2, mask, path);
+    fastdtw_cpp::dtw::apply(test, test2, distance);
     std::cout << distance << std::endl;
 
     std::cout << path.getDistance() << std::endl;
 
     fastdtw_cpp::path::WarpPath<float> path2;
-    fastdtw_cpp::fastdtw::std(test, test2, 2, path2, 0);
+    fastdtw_cpp::fastdtw::apply(test, test2, 2, path2, 0);
     std::cout << path2.getDistance() << std::endl;
-
-
-//    while (true) {
-//        std::cout << "I am cornholio, who wants some???" << std::endl;
-
-//        Muschi* m = NiceChics.getRandomChic().muschiPtr();
-
-//        while (true) {
-//            try {
-//                m->rub();
-//            } catch (squirt_juice j) {
-//                std::cout << j << std::endl;
-//                std::cout << "MUHAHAHAHAHAH" << std::endl;
-//                break;
-//            } catch (Exception e) {
-//                m->owner()->bitchSlap();
-//                i = 0;
-//                continue;
-//            }
-//        }
-//    }
-
-
 
 //    path.print();
 //    std::cout << path.getDistance() << std::endl;

@@ -12,10 +12,11 @@ namespace fastdtw_cpp {
 namespace fastdtw {
 
 template<typename T>
-void std(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
-         const unsigned int radius,
-         path::WarpPath<T> &path,
-         const unsigned int adaption = 0)
+void apply(const std::vector<T> &signal_a,
+           const std::vector<T> &signal_b,
+           const unsigned int radius,
+           path::WarpPath<T> &path,
+           const unsigned int adaption = 0)
 {
     /// signal_a is rows
     /// signal_b is cols
@@ -32,9 +33,9 @@ void std(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
     path::WarpPath<T> sub_path;
     unsigned int size_a = pyr_a.levelSize(last);
     unsigned int size_b = pyr_b.levelSize(last);
-    dtw::std(pyr_a.levelPtr(last), size_a,
-             pyr_b.levelPtr(last), size_b,
-             sub_path);
+    dtw::apply(pyr_a.levelPtr(last), size_a,
+               pyr_b.levelPtr(last), size_b,
+               sub_path);
 
     /// step 3: project path from level to level
 //    std::ofstream out("/tmp/data.txt");
@@ -60,10 +61,10 @@ void std(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
 //        out << std::endl << std::endl;
 
         sub_path = path::WarpPath<T>();
-        dtw::std(pyr_a.levelPtr(i), size_a,
-                 pyr_b.levelPtr(i), size_b,
-                 p.data(),
-                 sub_path);
+        dtw::apply(pyr_a.levelPtr(i), size_a,
+                   pyr_b.levelPtr(i), size_b,
+                   p.data(),
+                   sub_path);
     }
 //    out.close();
     path = sub_path;

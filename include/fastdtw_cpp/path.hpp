@@ -162,7 +162,7 @@ public:
 
     /**
      * @brief Set the calculated distance value.
-     * @param _distance     teh distance to be set
+     * @param _distance     the distance to be set
      */
     void setDistance(const T _distance)
     {
@@ -171,18 +171,26 @@ public:
 
     /**
      * @brief Get the distance value of the path.
-     * @return
+     * @return  the distance
      */
     T getDistance() const
     {
         return distance;
     }
 
+    /**
+     * @brief Size of the path.
+     * @return      size of the path
+     */
     unsigned int size() const
     {
         return anchors_x.size();
     }
 
+    /**
+     * @brief x_ptr
+     * @return
+     */
     const unsigned int* const x_ptr() const
     {
         return anchors_x.data();
@@ -216,8 +224,8 @@ private:
     std::vector<unsigned int> anchors_x;    /// x coordinates of a path
     std::vector<unsigned int> anchors_y;    /// y coordinates of a path
 
-//    unsigned int *ptr_x;                    /// fast access x pointer
-//    unsigned int *ptr_y;                    /// fast access y pointer
+//    unsigned int *ptr_x;                  /// fast access x pointer
+//    unsigned int *ptr_y;                  /// fast access y pointer
     T             distance;                 /// the distance
 };
 }
