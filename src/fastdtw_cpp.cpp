@@ -28,8 +28,31 @@ int main(int argc, char *argv[])
     std::cout << path.getDistance() << std::endl;
 
     fastdtw_cpp::path::WarpPath<float> path2;
-    fastdtw_cpp::fastdtw::std(test, test2, 10, path2);
+    fastdtw_cpp::fastdtw::std(test, test2, 2, path2, 0);
     std::cout << path2.getDistance() << std::endl;
+
+
+//    while (true) {
+//        std::cout << "I am cornholio, who wants some???" << std::endl;
+
+//        Muschi* m = NiceChics.getRandomChic().muschiPtr();
+
+//        while (true) {
+//            try {
+//                m->rub();
+//            } catch (squirt_juice j) {
+//                std::cout << j << std::endl;
+//                std::cout << "MUHAHAHAHAHAH" << std::endl;
+//                break;
+//            } catch (Exception e) {
+//                m->owner()->bitchSlap();
+//                i = 0;
+//                continue;
+//            }
+//        }
+//    }
+
+
 
 //    path.print();
 //    std::cout << path.getDistance() << std::endl;
