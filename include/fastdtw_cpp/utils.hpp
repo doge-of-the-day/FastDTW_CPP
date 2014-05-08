@@ -41,10 +41,10 @@ void shrink(const std::vector<T> &src, const unsigned int factor,
  * @param factor    the factor
  * @param dst       the destination vector
  */
-template<typename T, int factor>
+template<typename T, int SCALE>
 void shrink_static(const std::vector<T> &src, std::vector<T> &dst)
 {
-    unsigned int size(src.size() / factor + ((src.size() % factor) > 0 ? 1 : 0));
+    unsigned int size(src.size() / SCALE + ((src.size() % SCALE) > 0 ? 1 : 0));
     T tmp[size];
     typename std::vector<T>::const_iterator it(src.begin());
     typename std::vector<T>::const_iterator end(src.end());
@@ -52,7 +52,7 @@ void shrink_static(const std::vector<T> &src, std::vector<T> &dst)
     while(it != end) {
         T acc(0);
         unsigned int normalize(0);
-        for(unsigned int i(0) ; i < factor && it != end ; ++i, ++it) {
+        for(unsigned int i(0) ; i < SCALE && it != end ; ++i, ++it) {
             acc += *it;
             ++normalize;
         }
@@ -66,7 +66,7 @@ void shrink_static(const std::vector<T> &src, std::vector<T> &dst)
  * @brief The SignalPyramid class represents a pyramid containing
  *        different shrinking levels of a signal.
  */
-template<typename T, unsigned int factor = 2>
+template<typename T, unsigned int SCALE = 2>
 class SignalPyramid {
 public:
     /**
@@ -83,7 +83,7 @@ public:
         unsigned int size(signal.size());
         unsigned int data_size(size);
         while(size > min_size) {
-            size = size / factor + (size % factor > 0 ? 1 : 0);
+            size = size / SCALE + (size % SCALE > 0 ? 1 : 0);
             data_size += size;
             positions_.push_back(positions_.back() + sizes_.back());
             sizes_.push_back(size);
@@ -179,7 +179,7 @@ private:
         while(it < iterations) {
             T acc(0);
             unsigned int normalize(0);
-            for(int i = 0 ; i < factor && it < iterations ; ++i,++it) {
+            for(int i = 0 ; i < SCALE && it < iterations ; ++i,++it) {
                 acc += ptr_old_entry[it];
                 ++normalize;
             }
