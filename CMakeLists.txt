@@ -10,6 +10,8 @@ set(CMAKE_BUILD_TYPE Debug)
 set(FAST_DTW_FLAGS "-O3 -fprefetch-loop-arrays -ffast-math -fforce-addr -falign-functions=4 -funroll-loops -march=core2")
 set(CMAKE_CXX_FLAGS_RELEASE ${FAST_DTW_FLAGS})
 
+find_package(OpenCV)
+
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES fastdtw_cpp
@@ -29,6 +31,7 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
     include
+    ${OpenCV_INCLUDE_DIRS}
 )
 
 ## Declare a cpp library
@@ -39,6 +42,14 @@ add_executable(fastdtw_cpp
     include/fastdtw_cpp/path.hpp
     include/fastdtw_cpp/projection.hpp
     include/fastdtw_cpp/utils.hpp
-
     src/fastdtw_cpp.cpp
 )
+
+if(${OpenCV_FOUND})
+add_executable(path_visual
+    src/path_visual.cpp
+)
+target_link_libraries(path_visual
+    ${OpenCV_LIBRARIES}
+)
+endif()

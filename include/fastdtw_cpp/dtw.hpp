@@ -287,6 +287,42 @@ void apply(const std::vector<T> &signal_a,
     path.setDistance(distances_ptr[rows_distance * cols_distance - 1]);
     trace(distances_ptr, rows_distance, cols_distance, path);
 }
+
+template<typename T>
+void apply(const T* signal_a, const unsigned int size_a,
+           const T* signal_b, const unsigned int size_b,
+           const unsigned int* min_xs,
+           const unsigned int* max_xs,
+           const unsigned int  indeces,
+           path::WarpPath<T> &path)
+{
+    assert(size_a != 0);
+    assert(size_b != 0);
+    assert(indeces == size_a);
+    /// signal_a is rows
+    /// signal_b is cols
+
+    unsigned int rows_distance(size_a + 1);
+    unsigned int cols_distance(size_b + 1);
+    std::vector<T> distances(rows_distance * cols_distance, std::numeric_limits<T>::infinity());
+    T *distances_ptr = distances.data();
+    distances_ptr[0] = 0.f;
+
+    for(unsigned int it(0) ; it < indeces ; ++it) {
+        int pos_y(it * cols_distance);
+        int max_x(max_xs[it]);
+        for(unsigned int x(min_xs[it]) ; x <= max_x ; ++x) {
+            T cost      (distances::def_distance(signal_a[it], signal_b[x]));
+            T insertion (distances_ptr[pos_y + x + 1]);
+            T deletion  (distances_ptr[pos_y + cols_distance + x]);
+            T match     (distances_ptr[pos_y + x]);
+            distances_ptr[pos_y + cols_distance + x + 1] = cost + std::min(insertion, std::min(deletion, match));
+        }
+    }
+
+    path.setDistance(distances_ptr[rows_distance * cols_distance - 1]);
+    trace(distances_ptr, rows_distance, cols_distance, path);
+}
 }
 }
 #endif // DTW_HPP

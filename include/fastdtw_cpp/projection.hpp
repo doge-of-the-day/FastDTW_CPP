@@ -6,18 +6,21 @@
 namespace fastdtw_cpp {
 namespace projection {
 
-template<unsigned int RADIUS, unsigned int SCALE>
-class Projection2 {
+template<unsigned int Radius, unsigned int Scale>
+/**
+ * @brief The ProjectionIDC enables a index based projection.
+ */
+class ProjectionIDC {
 public:
     /**
-     * @brief Projection2 constructor.
-     * @param src_height
-     * @param src_width
+     * @brief ProjectionIDC constructor.
+     * @param src_height    height of the src space
+     * @param src_width     width of the src space
      */
-    Projection2(const unsigned int src_height,
+    ProjectionIDC(const unsigned int src_height,
                 const unsigned int src_width) :
-        height_(src_height * SCALE),
-        width_(src_width * SCALE),
+        height_(src_height * Scale),
+        width_(src_width * Scale),
         max_idx_(width_ - 1),
         max_idy_(height_ - 1),
         min_xs_(height_, 0),
@@ -25,15 +28,15 @@ public:
         min_xs_ptr_(min_xs_.data()),
         max_xs_ptr_(max_xs_.data())
     {
-        for(unsigned int i(height_ - SCALE - RADIUS) ; i < height_ ; ++i)
+        for(unsigned int i(height_ - Scale - Radius) ; i < height_ ; ++i)
             max_xs_ptr_[i] = max_idx_;
     }
 
     /**
-     * @brief Projection2
-     * @param other
+     * @brief ProjectionIDC copy constructor.
+     * @param other     other projection to copy
      */
-    Projection2(const Projection2 &other) :
+    ProjectionIDC(const ProjectionIDC &other) :
         height_(other.height_),
         width_(other.width_),
         max_idx_(other.max_idx_),
@@ -43,24 +46,24 @@ public:
         min_xs_ptr_(min_xs_.data()),
         max_xs_ptr_(max_xs_.data())
     {
-        for(unsigned int i(height_ - SCALE - RADIUS) ; i < height_ ; ++i)
+        for(unsigned int i(height_ - Scale - Radius) ; i < height_ ; ++i)
             max_xs_ptr_[i] = max_idx_;
     }
 
 
     /**
-     * @brief project
-     * @param path
+     * @brief The project a warp path to a higher resolution path.
+     * @param path  the warp path to project
      */
     template<typename T>
     inline void project(const path::WarpPath<T> &path)
     {
         assert(path.size() > 1);
 
-        int it_min_x(-RADIUS);
+        int it_min_x(-Radius);
         int it_min_y(OFFSET);
         int it_max_x(OFFSET);
-        int it_max_y(-RADIUS-1);
+        int it_max_y(-Radius-1);
 
         const unsigned int *path_x_ptr(path.x_ptr());
         const unsigned int *path_y_ptr(path.y_ptr());
@@ -74,11 +77,11 @@ public:
             bool right(curr_x > last_x);
             bool down (curr_y > last_y);
 
-            assert(it_max_y == last_y*SCALE-1-RADIUS);
-            assert(it_max_x == last_x*SCALE+1+RADIUS);
+            assert(it_max_y == last_y*Scale-1-Radius);
+            assert(it_max_x == last_x*Scale+1+Radius);
 
             if(right && down) {
-                for(unsigned int i(0) ; i < SCALE ; ++i) {
+                for(unsigned int i(0) ; i < Scale ; ++i) {
                     ++it_min_x;
                     ++it_min_y;
                     ++it_max_x;
@@ -88,10 +91,10 @@ public:
                     updateMaxXs(it_max_y, it_max_x - 1);
                 }
             } else if(right) {
-                it_min_x += SCALE;
-                it_max_x += SCALE;
+                it_min_x += Scale;
+                it_max_x += Scale;
             } else if(down) {
-                for(unsigned int i(0) ; i < SCALE ; ++i) {
+                for(unsigned int i(0) ; i < Scale ; ++i) {
                     ++it_min_y;
                     ++it_max_y;
                     updateMinXs(it_min_y, it_min_x);
@@ -104,7 +107,7 @@ public:
     }
 
     /**
-     * @brief print_ascii
+     * @brief Print out the projection in ascii manner.
      */
     void print_ascii() const
     {
@@ -120,7 +123,7 @@ public:
     }
 
     /**
-     * @brief print
+     * @brief Print out the limits.
      */
     void print() const
     {
@@ -130,9 +133,9 @@ public:
     }
 
     /**
-     * @brief min
-     * @param i
-     * @return
+     * @brief Get the ith minimum index.
+     * @param i     the index
+     * @return      the ith minimum index
      */
     unsigned int min(const unsigned int i) const
     {
@@ -140,9 +143,9 @@ public:
     }
 
     /**
-     * @brief max
-     * @param i
-     * @return
+     * @brief Get the ith maximum index.
+     * @param i     the index
+     * @return      the ith minimum index
      */
     unsigned int max(const unsigned int i) const
     {
@@ -150,8 +153,8 @@ public:
     }
 
     /**
-     * @brief size
-     * @return
+     * @brief The amount of index boundary indeces.
+     * @return      the amount of entries
      */
     unsigned int size() const
     {
@@ -159,16 +162,16 @@ public:
     }
 
     /**
-     * @brief maxXPtr
-     * @return
+     * @brief A pointer to the maximum index array.
+     * @return      the pointer
      */
     const unsigned int* const  maxXPtr() const  {
         return max_xs_ptr_;
     }
 
     /**
-     * @brief minXPtr
-     * @return
+     * @brief A pointer to the minimum index array.
+     * @return      the pointer
      */
     const unsigned int* const  minXPtr() const  {
         return min_xs_ptr_;
@@ -176,11 +179,11 @@ public:
 
 
 private:
-    unsigned int height_;
-    unsigned int width_;
-    int max_idx_;
-    int max_idy_;
-    const static unsigned int OFFSET = (SCALE + RADIUS - 1);
+    unsigned int              height_;
+    unsigned int              width_;
+    int                       max_idx_;
+    int                       max_idy_;
+    const static unsigned int OFFSET = (Scale + Radius - 1);
 
     std::vector<unsigned int> min_xs_;
     std::vector<unsigned int> max_xs_;

@@ -5,7 +5,7 @@ void TEST_1_projection2()
 {
     std::cout << std::endl;
 
-    fastdtw_cpp::projection::Projection2<1,2> p(4,4);
+    fastdtw_cpp::projection::ProjectionIDC<1,2> p(4,4);
     fastdtw_cpp::path::WarpPath<float> path;
     path.push_back(0,0);
     path.push_back(0,1);
@@ -33,7 +33,7 @@ void TEST_2_projection2()
 {
     std::cout << std::endl;
 
-    fastdtw_cpp::projection::Projection2<2,2> p(4,4);
+    fastdtw_cpp::projection::ProjectionIDC<2,2> p(4,4);
     fastdtw_cpp::path::WarpPath<float> path;
     path.push_back(0,0);
     path.push_back(1,0);
@@ -61,7 +61,7 @@ void TEST_3_projection2()
 {
     std::cout << std::endl;
 
-    fastdtw_cpp::projection::Projection2<0,2> p(4,4);
+    fastdtw_cpp::projection::ProjectionIDC<0,2> p(4,4);
     fastdtw_cpp::path::WarpPath<float> path;
     path.push_back(0,0);
     path.push_back(1,1);
@@ -82,7 +82,7 @@ void TEST_3_projection2()
 
     std::cout << std::endl;
 
-    fastdtw_cpp::projection::Projection2<1,2> p1(4,4);
+    fastdtw_cpp::projection::ProjectionIDC<1,2> p1(4,4);
     p1.project<float>(path);
 
     p1.print_ascii();
@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
     TEST_2_projection2();
     TEST_3_projection2();
 
-    fastdtw_cpp::projection::Projection2<1,2> p2 (9,10);
+    fastdtw_cpp::projection::ProjectionIDC<1,2> p2 (9,10);
     fastdtw_cpp::path::WarpPath<float> w2;
     w2.push_back(0,0);
     w2.push_back(0,1);
