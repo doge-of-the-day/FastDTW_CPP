@@ -1,32 +1,112 @@
 #include <fastdtw_cpp/dtw.hpp>
 #include <fastdtw_cpp/fastdtw.hpp>
 
-bool testProjection2() {
+void TEST_1_projection2()
+{
+    std::cout << std::endl;
 
-    /// first
-    fastdtw_cpp::projection::Projection2<1,2> p(10,10);
+    fastdtw_cpp::projection::Projection2<1,2> p(4,4);
     fastdtw_cpp::path::WarpPath<float> path;
     path.push_back(0,0);
     path.push_back(0,1);
+    path.push_back(1,2);
+    path.push_back(2,3);
+    path.push_back(3,3);
+    p.project<float>(path);
+
+    p.print_ascii();
+
+    assert(p.min(0) == 0); assert(p.max(0) == 2);
+    assert(p.min(1) == 0); assert(p.max(1) == 2);
+    assert(p.min(2) == 0); assert(p.max(2) == 3);
+    assert(p.min(3) == 0); assert(p.max(3) == 4);
+    assert(p.min(4) == 0); assert(p.max(4) == 5);
+    assert(p.min(5) == 0); assert(p.max(5) == 7);
+    assert(p.min(6) == 1); assert(p.max(6) == 7);
+    assert(p.min(7) == 2); assert(p.max(7) == 7);
+
+    std::cout << std::endl;
+
+}
+
+void TEST_2_projection2()
+{
+    std::cout << std::endl;
+
+    fastdtw_cpp::projection::Projection2<2,2> p(4,4);
+    fastdtw_cpp::path::WarpPath<float> path;
+    path.push_back(0,0);
+    path.push_back(1,0);
     path.push_back(2,1);
     path.push_back(3,2);
     path.push_back(3,3);
+    p.project<float>(path);
 
+    p.print_ascii();
 
+    assert(p.min(0) == 0); assert(p.max(0) == 7);
+    assert(p.min(1) == 0); assert(p.max(1) == 7);
+    assert(p.min(2) == 0); assert(p.max(2) == 7);
+    assert(p.min(3) == 0); assert(p.max(3) == 7);
+    assert(p.min(4) == 1); assert(p.max(4) == 7);
+    assert(p.min(5) == 2); assert(p.max(5) == 7);
+    assert(p.min(6) == 3); assert(p.max(6) == 7);
+    assert(p.min(7) == 4); assert(p.max(7) == 7);
 
+    std::cout << std::endl;
 
-    return true;
 }
 
+void TEST_3_projection2()
+{
+    std::cout << std::endl;
 
+    fastdtw_cpp::projection::Projection2<0,2> p(4,4);
+    fastdtw_cpp::path::WarpPath<float> path;
+    path.push_back(0,0);
+    path.push_back(1,1);
+    path.push_back(2,2);
+    path.push_back(3,3);
+    p.project<float>(path);
 
+    p.print_ascii();
 
+    assert(p.min(0) == 0); assert(p.max(0) == 1);
+    assert(p.min(1) == 0); assert(p.max(1) == 2);
+    assert(p.min(2) == 1); assert(p.max(2) == 3);
+    assert(p.min(3) == 2); assert(p.max(3) == 4);
+    assert(p.min(4) == 3); assert(p.max(4) == 5);
+    assert(p.min(5) == 4); assert(p.max(5) == 6);
+    assert(p.min(6) == 5); assert(p.max(6) == 7);
+    assert(p.min(7) == 6); assert(p.max(7) == 7);
+
+    std::cout << std::endl;
+
+    fastdtw_cpp::projection::Projection2<1,2> p1(4,4);
+    p1.project<float>(path);
+
+    p1.print_ascii();
+
+    assert(p1.min(0) == 0); assert(p1.max(0) == 3);
+    assert(p1.min(1) == 0); assert(p1.max(1) == 4);
+    assert(p1.min(2) == 0); assert(p1.max(2) == 5);
+    assert(p1.min(3) == 0); assert(p1.max(3) == 6);
+    assert(p1.min(4) == 1); assert(p1.max(4) == 7);
+    assert(p1.min(5) == 2); assert(p1.max(5) == 7);
+    assert(p1.min(6) == 3); assert(p1.max(6) == 7);
+    assert(p1.min(7) == 4); assert(p1.max(7) == 7);
+
+    std::cout << std::endl;
+}
 
 int main(int argc, char *argv[])
 {
 
+    TEST_1_projection2();
+    TEST_2_projection2();
+    TEST_3_projection2();
 
-    fastdtw_cpp::projection::Projection2<1,2> p2 (4,4);
+    fastdtw_cpp::projection::Projection2<1,2> p2 (9,10);
     fastdtw_cpp::path::WarpPath<float> w2;
     w2.push_back(0,0);
     w2.push_back(0,1);
@@ -44,8 +124,7 @@ int main(int argc, char *argv[])
     w2.push_back(9,8);
 
     p2.project<float>(w2);
-    p2.print();
-
+    p2.print_ascii();
 
 
     std::vector<float> test;

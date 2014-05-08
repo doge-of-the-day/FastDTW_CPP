@@ -9,6 +9,11 @@ namespace projection {
 template<unsigned int RADIUS, unsigned int SCALE>
 class Projection2 {
 public:
+    /**
+     * @brief Projection2 constructor.
+     * @param src_height
+     * @param src_width
+     */
     Projection2(const unsigned int src_height,
                 const unsigned int src_width) :
         height_(src_height * SCALE),
@@ -22,9 +27,31 @@ public:
     {
         for(unsigned int i(height_ - SCALE - RADIUS) ; i < height_ ; ++i)
             max_xs_ptr_[i] = max_idx_;
-
     }
 
+    /**
+     * @brief Projection2
+     * @param other
+     */
+    Projection2(const Projection2 &other) :
+        height_(other.height_),
+        width_(other.width_),
+        max_idx_(other.max_idx_),
+        max_idy_(other.max_idy_),
+        min_xs_(other.min_xs_),
+        max_xs_(other.max_xs_),
+        min_xs_ptr_(min_xs_.data()),
+        max_xs_ptr_(max_xs_.data())
+    {
+        for(unsigned int i(height_ - SCALE - RADIUS) ; i < height_ ; ++i)
+            max_xs_ptr_[i] = max_idx_;
+    }
+
+
+    /**
+     * @brief project
+     * @param path
+     */
     template<typename T>
     inline void project(const path::WarpPath<T> &path)
     {
@@ -35,7 +62,6 @@ public:
         int it_max_x(OFFSET);
         int it_max_y(-RADIUS-1);
 
-        std::cout << OFFSET << std::endl;
         const unsigned int *path_x_ptr(path.x_ptr());
         const unsigned int *path_y_ptr(path.y_ptr());
         const unsigned int path_size(path.size());
@@ -48,36 +74,26 @@ public:
             bool right(curr_x > last_x);
             bool down (curr_y > last_y);
 
-            std::cout << "my: " << it_max_y << "\ty: " << curr_y << std::endl;
             assert(it_max_y == last_y*SCALE-1-RADIUS);
             assert(it_max_x == last_x*SCALE+1+RADIUS);
 
             if(right && down) {
-                std::cout << "DIAG" << std::endl;
                 for(unsigned int i(0) ; i < SCALE ; ++i) {
                     ++it_min_x;
                     ++it_min_y;
                     ++it_max_x;
                     ++it_max_y;
-                    std::cout << "min y: " << it_min_y << " x: " << it_min_x << std::endl;
-                    std::cout << "max y: " << it_max_y << " x: " << it_max_x << std::endl;
 
                     updateMinXs(it_min_y, it_min_x);
                     updateMaxXs(it_max_y, it_max_x - 1);
                 }
             } else if(right) {
-                std::cout << "RIGHT" << std::endl;
                 it_min_x += SCALE;
                 it_max_x += SCALE;
-                std::cout << "min y: " << it_min_y << " x: " << it_min_x << std::endl;
-                std::cout << "max y: " << it_max_y << " x: " << it_max_x << std::endl;
             } else if(down) {
-                std::cout << "DOWN" << std::endl;
                 for(unsigned int i(0) ; i < SCALE ; ++i) {
                     ++it_min_y;
                     ++it_max_y;
-                    std::cout << "min y: " << it_min_y << " x: " << it_min_x << std::endl;
-                    std::cout << "max y: " << it_max_y << " x: " << it_max_x << std::endl;
                     updateMinXs(it_min_y, it_min_x);
                     updateMaxXs(it_max_y, it_max_x);
                 }
@@ -85,83 +101,85 @@ public:
             last_x = curr_x;
             last_y = curr_y;
         }
-
-        int i = 0;
-#define TEST(A,B) if(!(min_xs_.at(i) == A && max_xs_.at(i) == B)) std::cerr << "fail @ " << __LINE__ << ": expected " << A << ", " << B << ", got " << min_xs_.at(i) << ", " << max_xs_.at(i) << std::endl; \
-    else std::cerr << "okay @ " << __LINE__ << ": " << A << ", " << B << std::endl; ++i;
-
-#if 0
-        TEST(0,1);
-        TEST(0,1);
-
-        TEST(0,1);
-        TEST(0,1);
-
-        TEST(0,5);
-        TEST(0,6);
-
-        TEST(5,7);
-        TEST(6,8);
-
-        TEST(7,9);
-        TEST(8,9);
-
-        TEST(8,9);
-        TEST(8,10);
-
-        TEST(9,17);
-        TEST(10,17);
-
-        TEST(16,17);
-        TEST(16,18);
-
-        TEST(17,19);
-        TEST(18,19);
-#else
-        TEST(0,2);
-        TEST(0,2);
-
-        TEST(0,2);
-        TEST(0,6);
-
-        TEST(0,7);
-        TEST(0,8);
-
-        TEST(0,9);
-        TEST(4,10);
-
-        TEST(5,10);
-        TEST(6,10);
-
-        TEST(7,11);
-        TEST(7,18);
-
-        TEST(7,18);
-        TEST(8,18);
-
-        TEST(9,19);
-        TEST(15,19);
-
-        TEST(15,19);
-        TEST(16,19);
-
-#endif
     }
 
-    void print()
+    /**
+     * @brief print_ascii
+     */
+    void print_ascii() const
+    {
+        for(int i = 0 ; i < height_ ; ++i) {
+            for(int j = 0 ; j < min_xs_.at(i) ; ++j)
+                std::cout << "# ";
+            for(int j = min_xs_.at(i) ; j <= max_xs_.at(i) ; ++j)
+                std::cout << "  ";
+            for(int j = max_xs_.at(i) + 1 ; j < width_ ; ++j)
+                std::cout << "# ";
+            std::cout << std::endl;
+        }
+    }
+
+    /**
+     * @brief print
+     */
+    void print() const
     {
         for(int i = 0 ; i < height_ ; ++i) {
             std::cout << i << ": (" << min_xs_.at(i) << "," << max_xs_.at(i) << ")" << std::endl;
         }
     }
 
+    /**
+     * @brief min
+     * @param i
+     * @return
+     */
+    unsigned int min(const unsigned int i) const
+    {
+        return min_xs_.at(i);
+    }
+
+    /**
+     * @brief max
+     * @param i
+     * @return
+     */
+    unsigned int max(const unsigned int i) const
+    {
+        return max_xs_.at(i);
+    }
+
+    /**
+     * @brief size
+     * @return
+     */
+    unsigned int size() const
+    {
+        return height_;
+    }
+
+    /**
+     * @brief maxXPtr
+     * @return
+     */
+    const unsigned int* const  maxXPtr() const  {
+        return max_xs_ptr_;
+    }
+
+    /**
+     * @brief minXPtr
+     * @return
+     */
+    const unsigned int* const  minXPtr() const  {
+        return min_xs_ptr_;
+    }
 
 
 private:
-    const unsigned int height_;
-    const unsigned int width_;
-    const int max_idx_;
-    const int max_idy_;
+    unsigned int height_;
+    unsigned int width_;
+    int max_idx_;
+    int max_idy_;
     const static unsigned int OFFSET = (SCALE + RADIUS - 1);
 
     std::vector<unsigned int> min_xs_;
