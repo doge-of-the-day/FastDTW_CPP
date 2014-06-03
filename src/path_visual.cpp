@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 {
 
     while(true) {
-        int size(1024);
+        int size(1000);
         cv::Mat visual(size, size * 2, CV_8UC3, cv::Scalar::all(0));
 
         srand (time(NULL));
@@ -45,25 +45,25 @@ int main(int argc, char *argv[])
             prev = a;
         }
 
-        float max_b = max_a;
-        float min_b = min_b;
-        shift(signal_a, signal_b);
-//        float max_b(std::numeric_limits<float>::min());
-//        float min_b(std::numeric_limits<float>::max());
-//        for(unsigned int i = 0 ; i < size ; ++i) {
-//            float b = (rand() % 1000 ) * 0.01f;
-//            max_b = std::max(b, max_b);
-//            min_b = std::min(b, min_b);
-//            signal_b.push_back(b);
+//        float max_b = max_a;
+//        float min_b = min_b;
+//        shift(signal_a, signal_b);
+        float max_b(std::numeric_limits<float>::min());
+        float min_b(std::numeric_limits<float>::max());
+        for(unsigned int i = 0 ; i < size ; ++i) {
+            float b = (rand() % 1000 ) * 0.01f;
+            max_b = std::max(b, max_b);
+            min_b = std::min(b, min_b);
+            signal_b.push_back(b);
 //            signal_b.push_back(signal_a.at(i) + (10.f * (rand() % 2)));
-//        }
+        }
 
         fastdtw_cpp::path::WarpPath<float> p_dtw;
         fastdtw_cpp::dtw::apply(signal_a, signal_b, p_dtw);
         std::cout << " DTW : " << p_dtw.getDistance() << std::endl;
 
         fastdtw_cpp::path::WarpPath<float> p_fdtw;
-        fastdtw_cpp::fastdtw::apply<float,20>(signal_a, signal_b, p_fdtw);
+        fastdtw_cpp::fastdtw::apply<float,40>(signal_a, signal_b, p_fdtw);
         std::cout << " FTDTW : " << p_fdtw.getDistance() << std::endl;
 
 
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
                                     cv::Scalar(0,80,255));
             cv::line(visual_singal, cv::Point(i - 1, size * norm_b.at(i - 1)),
                                     cv::Point(i, size * norm_b.at(i)),
-                                    cv::Scalar(47,0,255));
+                                    cv::Scalar(255,255,20));
         }
 
         cv::resize(visual,visual,cv::Size(1280, 640));

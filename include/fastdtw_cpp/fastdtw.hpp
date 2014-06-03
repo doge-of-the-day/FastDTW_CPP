@@ -33,6 +33,10 @@ void apply(const std::vector<T> &signal_a,
     unsigned int adapt_radius(radius);
     utils::SignalPyramid<T, 2> pyr_a(signal_a, min_size);
     utils::SignalPyramid<T, 2> pyr_b(signal_b, min_size);
+    std::vector<unsigned int>  mods_a;
+    utils::offset_vector<2>(signal_a.size(), min_size, mods_a);
+    std::vector<unsigned int>  mods_b;
+    utils::offset_vector<2>(signal_b.size(), min_size, mods_b);
 
     int last(std::min(pyr_a.levels(), pyr_b.levels())
                       - 1);
@@ -48,7 +52,12 @@ void apply(const std::vector<T> &signal_a,
     for(int i(last) ; i > -1 ; --i) {
         adapt_radius += adaption;
 
-        projection::Projection p(size_a, size_b, 2);
+        projection::Projection p(size_a,
+                                 size_b,
+                                 2,
+                                 mods_a.at(i + 1),
+                                 mods_b.at(i + 1));
+
         p.project(sub_path, adapt_radius);
         size_a = pyr_a.levelSize(i);
         size_b = pyr_b.levelSize(i);
@@ -72,6 +81,10 @@ void apply(const std::vector<T> &signal_a,
     unsigned int min_size(Radius + 2);
     utils::SignalPyramid<T, 2> pyr_a(signal_a, min_size);
     utils::SignalPyramid<T, 2> pyr_b(signal_b, min_size);
+    std::vector<unsigned int>  mods_a;
+    utils::offset_vector<2>(signal_a.size(), min_size, mods_a);
+    std::vector<unsigned int>  mods_b;
+    utils::offset_vector<2>(signal_b.size(), min_size, mods_b);
 
     int last(std::min(pyr_a.levels(), pyr_b.levels())
                       - 1);
@@ -85,7 +98,10 @@ void apply(const std::vector<T> &signal_a,
 
     --last;
     for(int i(last) ; i > -1 ; --i) {
-        projection::ProjectionIDC<Radius, 2> p(size_a, size_b);
+        projection::ProjectionIDC<Radius, 2> p(size_a,
+                                               size_b,
+                                               mods_a.at(i + 1),
+                                               mods_b.at(i + 1));
         p.project(sub_path);
         size_a = pyr_a.levelSize(i);
         size_b = pyr_b.levelSize(i);

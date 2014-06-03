@@ -18,9 +18,11 @@ public:
      * @param src_width     width of the src space
      */
     ProjectionIDC(const unsigned int src_height,
-                const unsigned int src_width) :
-        height_(src_height * Scale),
-        width_(src_width * Scale),
+                  const unsigned int src_width,
+                  const unsigned int off_height = 0,
+                  const unsigned int off_width = 0) :
+        height_(src_height * Scale + off_height),
+        width_(src_width * Scale + off_width),
         max_idx_(width_ - 1),
         max_idy_(height_ - 1),
         min_xs_(height_, 0),
@@ -223,9 +225,11 @@ public:
      */
     Projection(const unsigned int _height,
                const unsigned int _width,
-               const unsigned int _scale) :
-        height_(_height * _scale),
-        width_(_width  * _scale),
+               const unsigned int _scale,
+               const unsigned int _off_height = 0,
+               const unsigned int _off_width = 0) :
+        height_(_height * _scale + _off_height),
+        width_(_width  * _scale + _off_width),
         scale_(_scale),
         data_(height_ * width_, false)
     {

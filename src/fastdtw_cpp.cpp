@@ -99,12 +99,39 @@ void TEST_3_projection2()
     std::cout << std::endl;
 }
 
+void TEST_4_offsets()
+{
+    std::vector<unsigned int> offsets;
+    fastdtw_cpp::utils::offset_vector<3>(1024, 10, offsets);
+    assert(offsets.size() == 5);
+    assert(offsets.at(0)  == 0);
+    assert(offsets.at(1)  == 1);
+    assert(offsets.at(2)  == 2);
+    assert(offsets.at(3)  == 2);
+    assert(offsets.at(4)  == 1);
+
+}
+
+void TEST_5_offsets()
+{
+    std::vector<unsigned int> offsets;
+    fastdtw_cpp::utils::offset_vector<2>(1000, 42, offsets);
+//    assert();
+//    assert();
+//    assert();
+//    assert();
+//    assert();
+//    assert();
+//    assert();
+}
+
 int main(int argc, char *argv[])
 {
 
     TEST_1_projection2();
     TEST_2_projection2();
     TEST_3_projection2();
+    TEST_4_offsets();
 
     fastdtw_cpp::projection::ProjectionIDC<1,2> p2 (9,10);
     fastdtw_cpp::path::WarpPath<float> w2;
@@ -154,6 +181,11 @@ int main(int argc, char *argv[])
     fastdtw_cpp::path::WarpPath<float> path2;
     fastdtw_cpp::fastdtw::apply(test, test2, 2, path2, 0);
     std::cout << path2.getDistance() << std::endl;
+
+
+
+
+
 
     //    path.print();
     //    std::cout << path.getDistance() << std::endl;

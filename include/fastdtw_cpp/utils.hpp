@@ -63,6 +63,28 @@ void shrink_static(const std::vector<T> &src, std::vector<T> &dst)
 }
 
 /**
+ * @brief Calculate the offset values for a reprojection.
+ * @param src_size      the original
+ * @param min_size      the minimum size to reach
+ * @param dst           the offset vector
+ */
+template <int SCALE>
+void offset_vector(const unsigned int src_size,
+                   const unsigned int min_size,
+                   std::vector<unsigned int> &dst)
+{
+    assert(min_size < src_size);
+    assert(dst.empty());
+    dst.push_back(0);
+    unsigned int size(src_size);
+    while(size / min_size > 1  /*size > min_size*/) {
+        int mod = size % SCALE;
+        dst.push_back(mod);
+        size = size / SCALE;
+    }
+}
+
+/**
  * @brief The SignalPyramid class represents a pyramid containing
  *        different shrinking levels of a signal.
  */
@@ -75,15 +97,14 @@ public:
      * @param min_size      the minumum size a level can have
      */
     SignalPyramid(const std::vector<T> &signal, const unsigned int min_size) :
-        level_(1)
+        level_(1),
+        positions_(1,0),
+        sizes_(1, signal.size())
     {
-        positions_.push_back(0);
-        sizes_.push_back(signal.size());
-
         unsigned int size(signal.size());
         unsigned int data_size(size);
-        while(size > min_size) {
-            size = size / SCALE + (size % SCALE > 0 ? 1 : 0);
+        while(size / min_size > 1) {
+            size = size / SCALE;
             data_size += size;
             positions_.push_back(positions_.back() + sizes_.back());
             sizes_.push_back(size);
