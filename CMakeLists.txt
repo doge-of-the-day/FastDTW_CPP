@@ -34,6 +34,8 @@ include_directories(
     ${OpenCV_INCLUDE_DIRS}
 )
 
+message("${OpenCV_LIBRARIES}")
+
 ## Declare a cpp library
 add_executable(fastdtw_cpp
     include/fastdtw_cpp/dtw.hpp
@@ -42,6 +44,7 @@ add_executable(fastdtw_cpp
     include/fastdtw_cpp/path.hpp
     include/fastdtw_cpp/projection.hpp
     include/fastdtw_cpp/utils.hpp
+    include/fastdtw_cpp/downsampling.hpp
     src/fastdtw_cpp.cpp
 )
 

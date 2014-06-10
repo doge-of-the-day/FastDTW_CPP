@@ -1,5 +1,6 @@
 #include <fastdtw_cpp/dtw.hpp>
 #include <fastdtw_cpp/fastdtw.hpp>
+#include <fastdtw_cpp/downsampling.hpp>
 
 void TEST_1_projection2()
 {
@@ -127,6 +128,13 @@ void TEST_5_offsets()
 
 int main(int argc, char *argv[])
 {
+
+    std::cout << fastdtw_cpp::utils::binomial_normalization<double, 1>::value << std::endl;
+    std::cout << fastdtw_cpp::utils::binomial_normalization<double, 2>::value << std::endl;
+    std::cout << fastdtw_cpp::utils::binomial_normalization<double, 3>::value << std::endl;
+    std::cout << fastdtw_cpp::utils::binomial_normalization<double, 4>::value << std::endl;
+    std::cout << fastdtw_cpp::utils::binomial_normalization<double, 5>::value << std::endl;
+
 
     TEST_1_projection2();
     TEST_2_projection2();
