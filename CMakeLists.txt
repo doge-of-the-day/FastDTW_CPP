@@ -34,8 +34,6 @@ include_directories(
     ${OpenCV_INCLUDE_DIRS}
 )
 
-message("${OpenCV_LIBRARIES}")
-
 ## Declare a cpp library
 add_executable(fastdtw_cpp
     include/fastdtw_cpp/dtw.hpp
