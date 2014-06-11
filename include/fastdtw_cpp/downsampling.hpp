@@ -10,13 +10,186 @@ namespace utils {
 #define FILTER_TYPE_BINOMIAL 1
 #define FILTER_TYPE_MEDIAN   2
 
-template <typename base_type, unsigned int scale, unsigned int filter_type, unsigned int filter_size>
+template <typename base_type, unsigned int filter_type, unsigned int filter_size>
 struct filter {
-    static void perform(
-        base_type* source,
-        base_type* target
+    static const base_type perform(
+        const base_type* source
     );
 };
+
+// ----------------------------------------------------------------
+// Box filter stuff
+// ----------------------------------------------------------------
+
+template <typename base_type, unsigned int n>
+struct normalization {
+    static const base_type value = ((base_type)1.0) / ((base_type)n);
+};
+
+
+template <typename base_type, unsigned int n>
+struct mean_helper {
+    static inline const base_type perform(
+        const base_type* source
+    ) {
+        return (*source) + mean_helper<base_type, n - 1>::perform(source + 1);
+    }
+};
+
+template <typename base_type>
+struct mean_helper<base_type, 1> {
+    static inline const base_type perform(
+        const base_type* source
+    ) {
+        return (*source);
+    }
+};
+
+template <typename base_type>
+struct mean_helper<base_type, 0> {
+    static inline const base_type perform(
+        const base_type* source
+    ) {
+        return base_type();
+    }
+};
+
+template <typename base_type, unsigned int n>
+struct mean {
+    static inline const base_type perform(
+        const base_type* source
+    ) {
+        return (
+            mean_helper<base_type, n>::perform(source) *
+            normalization<base_type, n>::value
+        );
+    }
+};
+
+template <typename base_type, unsigned int filter_size>
+struct filter<base_type, FILTER_TYPE_BOX, filter_size> {
+    static inline const base_type perform(
+        const base_type* source
+    ) {
+        return mean<base_type, filter_size>::perform(source);
+    }
+};
+
+
+
+// ----------------------------------------------------------------
+// Kernel stuff
+// ----------------------------------------------------------------
+
+template <typename base_type, unsigned int n>
+struct dot_helper {
+    static inline const base_type perform(
+        const base_type* source,
+        const base_type* source2
+    ) {
+        return (
+            ((*source) * (*source2)) +
+            dot_helper<base_type, n - 1>::perform(source + 1, source2 + 1)
+        );
+    }
+};
+
+template <typename base_type>
+struct dot_helper<base_type, 1> {
+    static inline const base_type perform(
+        const base_type* source,
+        const base_type* source2
+    ) {
+        return (*source) * (*source2);
+    }
+};
+
+template <typename base_type>
+struct dot_helper<base_type, 0> {
+    static inline const base_type perform(
+        const base_type* source,
+        const base_type* source2
+    ) {
+        return base_type();
+    }
+};
+
+template <typename base_type, unsigned int n>
+struct dot {
+    static inline const base_type perform(
+        const base_type* source,
+        const base_type* source2
+    ) {
+        return dot_helper<base_type, n>::perform(source, source2);
+    }
+};
+
+
+
+
+template <
+    typename base_type,
+    unsigned int n,
+    unsigned int n_max,
+    template <typename, unsigned int, unsigned int> class kernel
+>
+struct dot_kernel_helper {
+    static inline const base_type perform(
+        const base_type* source
+    ) {
+        return (
+            (*source) *
+            kernel<base_type, n_max, n_max - n>::value
+        ) + dot_kernel_helper<base_type, n - 1, n_max, kernel>::perform(source + 1);
+    }
+};
+
+
+template <
+    typename base_type,
+    unsigned int n_max,
+    template <typename, unsigned int, unsigned int> class kernel
+>
+struct dot_kernel_helper<base_type, 1, n_max, kernel> {
+    static inline const base_type perform(
+        const base_type* source
+    ) {
+        return (
+            (*source) *
+            kernel<base_type, n_max, n_max - 1>::value
+        );
+    }
+};
+
+
+template <
+    typename base_type,
+    unsigned int n_max,
+    template <typename, unsigned int, unsigned int> class kernel
+>
+struct dot_kernel_helper<base_type, 0, n_max, kernel> {
+    static inline const base_type perform(
+        const base_type* source
+    ) {
+        return base_type();
+    }
+};
+
+
+template <
+    typename base_type,
+    unsigned int n,
+    template <typename, unsigned int, unsigned int> class kernel
+>
+struct dot_kernel {
+    static inline const base_type peform(
+        const base_type* source
+    ) {
+        return dot_kernel_helper<base_type, n, n, kernel>::perform(source);
+    }
+};
+
+
 
 // ----------------------------------------------------------------
 // Binomial filter stuff
@@ -51,19 +224,25 @@ struct binomial_normalization {
 
 
 template <typename base_type, unsigned int kernel_size, unsigned int idx>
-struct binomial_coefficient_norm {
+struct binomial_kernel {
     static const base_type value = (
         ((base_type)binomial_coefficient<kernel_size - 1, idx>::value) *
         binomial_normalization<base_type, kernel_size>::value
     );
 };
 
-
-//TODO build recursive scalar product template
+template <typename base_type, unsigned int filter_size>
+struct filter<base_type, FILTER_TYPE_BINOMIAL, filter_size> {
+    static inline const base_type perform(
+        const base_type* source
+    ) {
+        return dot_kernel<base_type, filter_size, binomial_kernel>::peform(source);
+    }
+};
 
 
 // ----------------------------------------------------------------
-
+/*
 template <typename base_type, unsigned int scale, unsigned int filter_size>
 //template <typename base_type, unsigned int scale, unsigned int filter_type, unsigned int filter_size>
 struct filter<base_type, scale, FILTER_TYPE_BINOMIAL, filter_size> {
@@ -71,38 +250,14 @@ struct filter<base_type, scale, FILTER_TYPE_BINOMIAL, filter_size> {
         base_type* source,
         base_type* target
     ) {
-        *target = accu;
+        //*target = accu;
     }
 };
-
+*/
 
 // ----------------------------------------------------------------
 // Median filter stuff
 // ----------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

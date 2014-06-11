@@ -126,6 +126,74 @@ void TEST_5_offsets()
 //    assert();
 }
 
+
+void TEST_mean() {
+
+    double data[] = {1.0, 2.0, 3.0, 4.0, 5.0};
+
+    const double mean = fastdtw_cpp::utils::mean<double, 5>::perform(data);
+
+    std::cout << "MEAN: " << mean << std::endl;
+
+    assert(mean == 3.0);
+
+}
+
+void TEST_dot() {
+
+    double data[] = {1.0, 2.0, 3.0, 4.0, 5.0};
+
+    const double dot = fastdtw_cpp::utils::dot<double, 5>::perform(data, data);
+
+    std::cout << "DOT PRODUCT: " << dot << std::endl;
+
+    assert(dot == 55.0);
+}
+
+
+void TEST_filterBox() {
+
+    double data[] = {1.0, 2.0, 3.0, 4.0, 5.0};
+
+    const double result = fastdtw_cpp::utils::filter<double, FILTER_TYPE_BOX, 5>::perform(data);
+
+    std::cout << "BOX RESULT: " << result << std::endl;
+
+    assert(result == 3.0);
+
+}
+
+void TEST_filterBinomial() {
+
+    double data[] = {1.0, 1.0, 2.0, 1.0, 1.0};
+
+    double target = (
+        (data[0] * fastdtw_cpp::utils::binomial_kernel<double, 5, 0>::value) +
+        (data[1] * fastdtw_cpp::utils::binomial_kernel<double, 5, 1>::value) +
+        (data[2] * fastdtw_cpp::utils::binomial_kernel<double, 5, 2>::value) +
+        (data[3] * fastdtw_cpp::utils::binomial_kernel<double, 5, 3>::value) +
+        (data[4] * fastdtw_cpp::utils::binomial_kernel<double, 5, 4>::value)
+    );
+
+    const double result = fastdtw_cpp::utils::filter<double, FILTER_TYPE_BINOMIAL, 5>::perform(data);
+
+    std::cout << "BINOMIAL RESULT: " << result << std::endl;
+
+    assert(result == target);
+
+}
+
+
+void TEST_filterMedian() {
+
+    double data[] = {1.0, 2.0, 3.0, 4.0, 5.0};
+
+    const double result = fastdtw_cpp::utils::filter<double, FILTER_TYPE_BOX, 5>::perform(data);
+
+    std::cout << "MEDIAN RESULT: " << result << " should be " << 3.0 << std::endl;
+}
+
+
 int main(int argc, char *argv[])
 {
 
@@ -191,9 +259,12 @@ int main(int argc, char *argv[])
     std::cout << path2.getDistance() << std::endl;
 
 
+    TEST_mean();
+    TEST_dot();
 
-
-
+    TEST_filterBox();
+    TEST_filterBinomial();
+    TEST_filterMedian();
 
     //    path.print();
     //    std::cout << path.getDistance() << std::endl;
