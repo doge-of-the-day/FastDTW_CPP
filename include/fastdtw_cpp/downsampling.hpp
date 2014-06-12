@@ -8,7 +8,6 @@ namespace utils {
 
 #define FILTER_TYPE_BOX      0
 #define FILTER_TYPE_BINOMIAL 1
-#define FILTER_TYPE_MEDIAN   2
 
 template <typename base_type, unsigned int filter_type, unsigned int filter_size>
 struct filter {
@@ -241,38 +240,71 @@ struct filter<base_type, FILTER_TYPE_BINOMIAL, filter_size> {
 };
 
 
-// ----------------------------------------------------------------
-/*
-template <typename base_type, unsigned int scale, unsigned int filter_size>
-//template <typename base_type, unsigned int scale, unsigned int filter_type, unsigned int filter_size>
-struct filter<base_type, scale, FILTER_TYPE_BINOMIAL, filter_size> {
-    static inline void perform(
-        base_type* source,
-        base_type* target
-    ) {
-        //*target = accu;
-    }
-};
-*/
+
 
 // ----------------------------------------------------------------
-// Median filter stuff
+// Subsampling stuff
 // ----------------------------------------------------------------
+
+template <unsigned int filter_size>
+struct filter_bounds {
+    enum { center = filter_size / 2};
+    enum { lwidth = center };
+    enum { rwidth = filter_size - (center + 1) };
+};
 
 
 
 template <typename base_type, unsigned int scale, unsigned int filter_type, unsigned int filter_size>
 void subsample(
-    base_type* source,
+    const base_type* source,
     const unsigned int source_length,
-    base_type* target,
-    const unsigned int target_length
+    base_type* target
 ) {
+    //
+    const unsigned int target_length = source_length / scale;
+    const unsigned int lastin = source_length - (1 + filter_bounds<filter_size>::rwidth);
+    //
+    const base_type* in  = source;
+    base_type*       out = target;
+    //
+    unsigned int i = 0;
+    //
+    for (unsigned int j = 0; j < target_length; j++) {
+        //
+        if (
+            (i >= filter_bounds<filter_size>::center) &&
+            (i < lastin )
+            // HASS!!!
+        ) {
+           *out = filter<base_type, filter_type, filter_size>::perform(in + i - filter_bounds<filter_size>::lwidth);
+           out++;
+        }
 
+        i += scale;
+
+        out++;
+    }
+    //
+    // perform inner computation.
+    //
+    for (unsigned int i = center; i <= lastin; i += scale) {
+
+
+
+
+
+
+    // HASS!!!
+    //    *out = filter<base_type, filter_type, filter_size>::perform(source + i)
+    //        ++out;
+    }
+    //
+    // perform right border region.
+    //
+
+    //
 }
-
-
-
 
 
 

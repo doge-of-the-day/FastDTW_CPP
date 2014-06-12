@@ -183,17 +183,6 @@ void TEST_filterBinomial() {
 
 }
 
-
-void TEST_filterMedian() {
-
-    double data[] = {1.0, 2.0, 3.0, 4.0, 5.0};
-
-    const double result = fastdtw_cpp::utils::filter<double, FILTER_TYPE_BOX, 5>::perform(data);
-
-    std::cout << "MEDIAN RESULT: " << result << " should be " << 3.0 << std::endl;
-}
-
-
 int main(int argc, char *argv[])
 {
 
