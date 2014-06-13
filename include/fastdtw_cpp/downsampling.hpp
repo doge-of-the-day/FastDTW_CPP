@@ -256,7 +256,7 @@ struct filter_bounds {
 
 
 template <typename base_type, unsigned int scale, unsigned int filter_type, unsigned int filter_size>
-void subsample(
+void downsample(
     const base_type* source,
     const unsigned int source_length,
     base_type* target
