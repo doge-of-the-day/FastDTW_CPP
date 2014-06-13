@@ -253,7 +253,6 @@ int main(int argc, char *argv[])
 
     TEST_filterBox();
     TEST_filterBinomial();
-    TEST_filterMedian();
 
     //    path.print();
     //    std::cout << path.getDistance() << std::endl;

@@ -288,7 +288,7 @@ void subsample(
     //
     // perform inner computation.
     //
-    for (unsigned int i = center; i <= lastin; i += scale) {
+    //for (unsigned int i = center; i <= lastin; i += scale) {
 
 
 
@@ -298,7 +298,7 @@ void subsample(
     // HASS!!!
     //    *out = filter<base_type, filter_type, filter_size>::perform(source + i)
     //        ++out;
-    }
+    //}
     //
     // perform right border region.
     //
