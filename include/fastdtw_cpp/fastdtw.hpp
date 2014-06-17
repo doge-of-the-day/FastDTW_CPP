@@ -30,7 +30,6 @@ void apply(const std::vector<T> &signal_a,
     /// signal_a is rows
     /// signal_b is cols
     unsigned int min_size(radius + 2);
-    unsigned int adapt_radius(radius);
     utils::SignalPyramid<T, 2> pyr_a(signal_a, min_size);
     utils::SignalPyramid<T, 2> pyr_b(signal_b, min_size);
     std::vector<unsigned int>  mods_a;
@@ -50,15 +49,13 @@ void apply(const std::vector<T> &signal_a,
 
     --last;
     for(int i(last) ; i > -1 ; --i) {
-        adapt_radius += adaption;
-
         projection::Projection p(size_a,
                                  size_b,
                                  2,
                                  mods_a.at(i + 1),
                                  mods_b.at(i + 1));
 
-        p.project(sub_path, adapt_radius);
+        p.project(sub_path, radius);
         size_a = pyr_a.levelSize(i);
         size_b = pyr_b.levelSize(i);
 
@@ -98,20 +95,21 @@ void apply(const std::vector<T> &signal_a,
 
     --last;
     for(int i(last) ; i > -1 ; --i) {
-        projection::ProjectionIDC<Radius, 2> p(size_a,
-                                               size_b,
-                                               mods_a.at(i + 1),
-                                               mods_b.at(i + 1));
-        p.project(sub_path);
+
+        projection::Projection p(size_a,
+                                 size_b,
+                                 2,
+                                 mods_a.at(i + 1),
+                                 mods_b.at(i + 1));
+
+        p.project(sub_path, Radius);
         size_a = pyr_a.levelSize(i);
         size_b = pyr_b.levelSize(i);
 
         sub_path = path::WarpPath<T>();
         dtw::apply(pyr_a.levelPtr(i), size_a,
                    pyr_b.levelPtr(i), size_b,
-                   p.minXPtr(),
-                   p.maxXPtr(),
-                   p.size(),
+                   p.data(),
                    sub_path);
     }
     path = sub_path;

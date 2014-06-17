@@ -4,6 +4,7 @@
 #include <vector>
 #include <assert.h>
 #include <iostream>
+#include "downsampling.hpp"
 
 namespace fastdtw_cpp {
 namespace utils {
@@ -88,9 +89,13 @@ void offset_vector(const unsigned int src_size,
  * @brief The SignalPyramid class represents a pyramid containing
  *        different shrinking levels of a signal.
  */
-template<typename T, unsigned int SCALE = 2>
+template<typename T, unsigned int SCALE = 2,
+         unsigned int FILTER = FILTER_TYPE_BINOMIAL,
+         unsigned int FILTER_SIZE = 3>
 class SignalPyramid {
 public:
+    /// template <typename base_type, unsigned int scale, unsigned int filter_type, unsigned int filter_size>
+
     /**
      * @brief SignalPyramid constructor.
      * @param signal        the signal to be obtained in different scales
@@ -194,19 +199,8 @@ private:
         assert(i > 0);
         T *ptr_old_entry(ptr_data_ + ptr_positions_[i-1]);
         T *ptr_new_entry(ptr_data_ + ptr_positions_[i]);
-        unsigned int iterations(ptr_sizes_[i-1]);
-        unsigned int it(0);
-
-        while(it < iterations) {
-            T acc(0);
-            unsigned int normalize(0);
-            for(int i = 0 ; i < SCALE && it < iterations ; ++i,++it) {
-                acc += ptr_old_entry[it];
-                ++normalize;
-            }
-            ptr_new_entry[0] = acc / (double) normalize;
-            ++ptr_new_entry;
-        }
+        unsigned int old_size(ptr_sizes_[i-1]);
+        downSample<T, SCALE, FILTER, FILTER_SIZE>(ptr_old_entry, old_size, ptr_new_entry);
     }
 };
 

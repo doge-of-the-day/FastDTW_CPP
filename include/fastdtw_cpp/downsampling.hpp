@@ -1,4 +1,4 @@
-#ifndef DOWNSAMLPING_HPP
+#ifndef DOWNSAMPLING_HPP
 #define DOWNSAMPLING_HPP
 
 
