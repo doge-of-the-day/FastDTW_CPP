@@ -243,67 +243,83 @@ struct filter<base_type, FILTER_TYPE_BINOMIAL, filter_size> {
 
 
 // ----------------------------------------------------------------
-// Subsampling stuff
+// Downsampling stuff
 // ----------------------------------------------------------------
 
 template <unsigned int filter_size>
 struct filter_bounds {
-    enum { center = filter_size / 2};
-    enum { lwidth = center };
-    enum { rwidth = filter_size - (center + 1) };
+    enum { center = (filter_size - 1) / 2};
+    enum { left   = center };
+    enum { right  = filter_size - (center + 1) };
 };
 
 
 
 template <typename base_type, unsigned int scale, unsigned int filter_type, unsigned int filter_size>
-void downsample(
+void downSample(
     const base_type* source,
     const unsigned int source_length,
     base_type* target
 ) {
     //
     const unsigned int target_length = source_length / scale;
-    const unsigned int lastin = source_length - (1 + filter_bounds<filter_size>::rwidth);
+    base_type buffer[filter_size];
     //
-    const base_type* in  = source;
-    base_type*       out = target;
+    // compute important boundary information.
     //
-    unsigned int i = 0;
+    int j = 0;
+    const int i_min = 0;
+    const int i_lbd = (int)std::ceil(
+        (double)(filter_bounds<filter_size>::left) /
+        (double)(scale)
+    );
+    const int i_ubd = std::max(i_lbd - 1, (int)(target_length) - (1 + i_lbd));
+    const int i_max = target_length - 1;
     //
-    for (unsigned int j = 0; j < target_length; j++) {
+    // convole left region (boundary-safe)
+    //
+    for (int i = i_min; i < i_lbd; i++) {
         //
-        if (
-            (i >= filter_bounds<filter_size>::center) &&
-            (i < lastin )
-            // HASS!!!
-        ) {
-           *out = filter<base_type, filter_type, filter_size>::perform(in + i - filter_bounds<filter_size>::lwidth);
-           out++;
+        for (int k = 0; k < filter_size; k++) {
+            register int idx = k + j - filter_bounds<filter_size>::left;
+            if (idx < 0) idx = 0;
+            if (idx >= source_length) idx = source_length - 1;
+            buffer[k] = source[idx];
         }
-
-        i += scale;
-
-        out++;
+        //
+        target[i] = filter<base_type, filter_type, filter_size>::perform(
+            buffer
+        );
+        //
+        j += scale;
     }
     //
-    // perform inner computation.
+    // convole inner region
     //
-    //for (unsigned int i = center; i <= lastin; i += scale) {
-
-
-
-
-
-
-    // HASS!!!
-    //    *out = filter<base_type, filter_type, filter_size>::perform(source + i)
-    //        ++out;
-    //}
+    for (int i = i_lbd; i <= i_ubd; i++) {
+        target[i] = filter<base_type, filter_type, filter_size>::perform(
+            source + j - filter_bounds<filter_size>::left
+        );
+        j += scale;
+    }
     //
-    // perform right border region.
+    // colvole right region (boundary-safe)
     //
-
-    //
+    for (int i = i_ubd + 1; i <= i_max; i++) {
+        //
+        for (int k = 0; k < filter_size; k++) {
+            register int idx = k + j - filter_bounds<filter_size>::left;
+            if (idx < 0) idx = 0;
+            if (idx >= source_length) idx = source_length - 1;
+            buffer[k] = source[idx];
+        }
+        //
+        target[i] = filter<base_type, filter_type, filter_size>::perform(
+            buffer
+        );
+        //
+        j += scale;
+    }
 }
 
 
