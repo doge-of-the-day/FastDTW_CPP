@@ -124,7 +124,7 @@ public:
      * @brief Return the x data ptr for fast access.
      * @return      const ptr to the x data array / vector
      */
-    const unsigned int* const x_ptr() const
+    const unsigned int* x_ptr() const
     {
         return anchors_x_.data();
     }
@@ -133,7 +133,7 @@ public:
      * @brief Return the y data ptr for fast access.
      * @return      const ptr to the x data array / vector
      */
-    const unsigned int* const y_ptr() const
+    const unsigned int* y_ptr() const
     {
         return anchors_y_.data();
     }

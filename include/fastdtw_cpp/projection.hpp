@@ -167,7 +167,7 @@ public:
      * @brief A pointer to the maximum index array.
      * @return      the pointer
      */
-    const unsigned int* const  maxXPtr() const  {
+    const unsigned int* maxXPtr() const  {
         return max_xs_ptr_;
     }
 
@@ -175,7 +175,7 @@ public:
      * @brief A pointer to the minimum index array.
      * @return      the pointer
      */
-    const unsigned int* const  minXPtr() const  {
+    const unsigned int* minXPtr() const  {
         return min_xs_ptr_;
     }
 

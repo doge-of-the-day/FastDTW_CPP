@@ -102,9 +102,9 @@ public:
      * @param min_size      the minumum size a level can have
      */
     SignalPyramid(const std::vector<T> &signal, const unsigned int min_size) :
-        level_(1),
         positions_(1,0),
-        sizes_(1, signal.size())
+        sizes_(1, signal.size()),
+        level_(1)
     {
         unsigned int size(signal.size());
         unsigned int data_size(size);
@@ -151,7 +151,7 @@ public:
      * @param i     the level
      * @return
      */
-    const T* const levelPtr(const unsigned int i) const
+    const T* levelPtr(const unsigned int i) const
     {
         return ptr_data_ + ptr_positions_[i];
     }
