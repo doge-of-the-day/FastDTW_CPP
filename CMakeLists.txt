@@ -6,7 +6,7 @@ project(fastdtw_cpp)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED)
 
-set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Release)
 set(FAST_DTW_FLAGS "-O3")
 set(CMAKE_CXX_FLAGS_RELEASE ${FAST_DTW_FLAGS})
 

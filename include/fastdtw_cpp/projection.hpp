@@ -233,6 +233,7 @@ public:
         scale_(_scale),
         data_(new bool [height_ * width_])
     {
+        std::fill(data_, data_ + height_ * width_, false);
     }
 
     virtual ~Projection()
@@ -398,7 +399,6 @@ private:
         if(off_x < width_)
             for(unsigned it_y(min_y) ; it_y < max_y; ++it_y) {
                 data_[it_y * width_ + off_x] = true;
-                // data_.at(it_y * width_ + off_x) = true;
             }
 
         if(off_y < height_) {

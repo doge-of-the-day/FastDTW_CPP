@@ -448,13 +448,13 @@ int main(int argc, char *argv[])
 //    TEST_downSamplingBox();
 //    TEST_downSamplingBinomial();
 
-    for(int i = 0 ; i < 10 ; ++i) {
+    for(int i = 0 ; i < 10000 ; ++i) {
         std::cout << i << std::endl;
         std::vector<float> v1(1000, 0);
         std::vector<float> v2(1000, 1);
 
         fastdtw_cpp::path::WarpPath<float> distance;
-        fastdtw_cpp::fastdtw::apply<float, 2>(v1, v2, distance);
+        fastdtw_cpp::fastdtw::apply<float>(v1, v2, 2, distance, 0);
         std::cout << distance.getDistance() << std::endl;
 
     }
