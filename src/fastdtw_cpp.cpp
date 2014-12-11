@@ -385,70 +385,72 @@ void TEST_downSamplingBinomial() {
 int main(int argc, char *argv[])
 {
 
-//    TEST_1_projection2();
-//    TEST_2_projection2();
-//    TEST_3_projection2();
-//    TEST_4_offsets();
+    TEST_1_projection2();
+    TEST_2_projection2();
+    TEST_3_projection2();
+    TEST_4_offsets();
 
-//    fastdtw_cpp::projection::ProjectionIDC<1,2> p2 (9,10);
-//    fastdtw_cpp::path::WarpPath<float> w2;
-//    w2.push_back(0,0);
-//    w2.push_back(0,1);
-//    w2.push_back(0,2);
-//    w2.push_back(1,2);
-//    w2.push_back(2,2);
-//    w2.push_back(3,3);
-//    w2.push_back(4,4);
-//    w2.push_back(4,5);
-//    w2.push_back(5,6);
-//    w2.push_back(6,6);
-//    w2.push_back(7,6);
-//    w2.push_back(8,6);
-//    w2.push_back(8,7);
-//    w2.push_back(9,8);
+    fastdtw_cpp::projection::ProjectionIDC<1,2> p2 (9,10);
+    fastdtw_cpp::path::WarpPath<float> w2;
+    w2.push_back(0,0);
+    w2.push_back(0,1);
+    w2.push_back(0,2);
+    w2.push_back(1,2);
+    w2.push_back(2,2);
+    w2.push_back(3,3);
+    w2.push_back(4,4);
+    w2.push_back(4,5);
+    w2.push_back(5,6);
+    w2.push_back(6,6);
+    w2.push_back(7,6);
+    w2.push_back(8,6);
+    w2.push_back(8,7);
+    w2.push_back(9,8);
 
-//    p2.project<float>(w2);
-//    p2.print_ascii();
-
-
-//    std::vector<float> test;
-//    std::vector<float> test2;
-//    for(int i = 0 ; i < 128 ; ++i) {
-//        test.push_back(i);
-//        test2.push_back(i+1);
-//    }
+    p2.project<float>(w2);
+    p2.print_ascii();
 
 
-//    //    fastdtw_cpp::utils::SignalPyramid<float,2> s(test, 2);
-//    //    s.print();
+    std::vector<float> test;
+    std::vector<float> test2;
+    for(int i = 0 ; i < 128 ; ++i) {
+        test.push_back(i);
+        test2.push_back(i+1);
+    }
 
-//    //    for(int i = 0 ; i < s.levelSize(0); ++i) {
-//    //        std::cout << s.levelPtr(0)[i] << std::endl;
-//    //    }
 
-//    fastdtw_cpp::path::WarpPath<float> path;
-//    float distance = 0;
-//    std::vector<bool> mask(128 * 128, true);
-//    fastdtw_cpp::dtw::apply(test, test2, mask, path);
-//    fastdtw_cpp::dtw::apply(test, test2, distance);
-//    std::cout << distance << std::endl;
+    //    fastdtw_cpp::utils::SignalPyramid<float,2> s(test, 2);
+    //    s.print();
 
-//    std::cout << path.getDistance() << std::endl;
+    //    for(int i = 0 ; i < s.levelSize(0); ++i) {
+    //        std::cout << s.levelPtr(0)[i] << std::endl;
+    //    }
 
-//    fastdtw_cpp::path::WarpPath<float> path2;
-//    fastdtw_cpp::fastdtw::apply(test, test2, 2, path2, 0);
-//    std::cout << path2.getDistance() << std::endl;
+    fastdtw_cpp::path::WarpPath<float> path;
+    float distance = 0;
+    bool * mask_values = new bool[128 * 128];
+    std::fill(mask_values, mask_values + 128 * 128, true);
+    fastdtw_cpp::Mask m(mask_values, 128 * 128);
+    fastdtw_cpp::dtw::apply(test, test2, m, path);
+    fastdtw_cpp::dtw::apply(test, test2, distance);
+    std::cout << distance << std::endl;
 
-//    TEST_mean();
-//    TEST_dot();
+    std::cout << path.getDistance() << std::endl;
 
-//    TEST_filterBox();
-//    TEST_filterBinomial();
+    fastdtw_cpp::path::WarpPath<float> path2;
+    fastdtw_cpp::fastdtw::apply(test, test2, 2, path2, 0);
+    std::cout << path2.getDistance() << std::endl;
 
-//    TEST_downSamplingBox();
-//    TEST_downSamplingBinomial();
+    TEST_mean();
+    TEST_dot();
 
-    for(int i = 0 ; i < 10000 ; ++i) {
+    TEST_filterBox();
+    TEST_filterBinomial();
+
+    TEST_downSamplingBox();
+    TEST_downSamplingBinomial();
+
+    for(int i = 0 ; i < 1000 ; ++i) {
         std::cout << i << std::endl;
         std::vector<float> v1(1000, 0);
         std::vector<float> v2(1000, 1);
@@ -459,10 +461,10 @@ int main(int argc, char *argv[])
 
     }
 
-    //    path.print();
-    //    std::cout << path.getDistance() << std::endl;
-    //    std::cout << " --- " << std::endl;
-    //    path2.print();
+        path.print();
+        std::cout << path.getDistance() << std::endl;
+        std::cout << " --- " << std::endl;
+        path2.print();
 
     return 0;
 }
