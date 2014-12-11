@@ -7,6 +7,7 @@
 
 #include "distances.hpp"
 #include "path.hpp"
+#include "mask.hpp"
 
 namespace fastdtw_cpp {
 namespace dtw {
@@ -18,10 +19,10 @@ namespace dtw {
  * @param path      the path to written to
  */
 template<typename T>
-void trace(const T *data,
-           const unsigned int rows,
-           const unsigned int cols,
-           path::WarpPath<T> &path)
+void trace(const T            *data,
+           const unsigned int  rows,
+           const unsigned int  cols,
+           path::WarpPath<T>  &path)
 {
     unsigned int x(0);
     unsigned int y(0);
@@ -73,7 +74,7 @@ void apply(const std::vector<T> &signal_a,
     unsigned int steps_x(signal_b.size());
     unsigned int rows(steps_y + 1);
     unsigned int cols(steps_x + 1);
-    T distances[rows * cols];
+    T *distances = new T[rows * cols];
 
     for(unsigned int i = 1 ; i < rows ; ++i)
         distances[i * cols] = std::numeric_limits<T>::infinity();
@@ -98,6 +99,7 @@ void apply(const std::vector<T> &signal_a,
         }
     }
     distance = distances[rows * cols - 1];
+    delete[] distances;
 }
 
 /**
@@ -107,8 +109,9 @@ void apply(const std::vector<T> &signal_a,
  * @param path          the warp path
  */
 template<typename T>
-void apply(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
-           path::WarpPath<T> &path)
+void apply(const std::vector<T> &signal_a,
+           const std::vector<T> &signal_b,
+           path::WarpPath<T>    &path)
 {
     assert(signal_a.size() != 0);
     assert(signal_b.size() != 0);
@@ -118,7 +121,7 @@ void apply(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
     unsigned int steps_x(signal_b.size());
     unsigned int rows(steps_y + 1);
     unsigned int cols(steps_x + 1);
-    T distances[rows * cols];
+    T *distances = new T[rows * cols];
 
     for(unsigned int i = 1 ; i < rows ; ++i)
         distances[i * cols] = std::numeric_limits<T>::infinity();
@@ -143,6 +146,7 @@ void apply(const std::vector<T> &signal_a, const std::vector<T> &signal_b,
     }
     path.setDistance(distances[rows * cols - 1]);
     trace(distances, rows, cols, path);
+    delete[] distances;
 }
 
 /**
@@ -202,12 +206,12 @@ void apply(const T* signal_a, const unsigned int size_a,
 template<typename T>
 void apply(const T* signal_a, const unsigned int size_a,
            const T* signal_b, const unsigned int size_b,
-           const std::vector<bool> &mask,
+           const Mask &mask,
            path::WarpPath<T> &path)
 {
     assert(size_a != 0);
     assert(size_b != 0);
-    assert(mask.size() == size_a * size_b);
+    assert(mask.size == size_a * size_b);
     /// signal_a is rows
     /// signal_b is cols
     unsigned int steps_y(size_a);
@@ -221,10 +225,10 @@ void apply(const T* signal_a, const unsigned int size_a,
     distances_ptr[0] = 0.f;
 
     for(unsigned int y = 0 ; y < steps_y; ++y) {
-        int pos_y = y * cols_distance;
-        int pos_m = y * cols_mask;
+        int pos_y(y * cols_distance);
+        int pos_m(y * cols_mask);
         for(unsigned int x = 0 ; x < steps_x; ++x) {
-            if(mask.at(pos_m + x)) {
+            if(mask.data[pos_m + x]) {
                 T cost      (distances::def_distance(signal_a[y], signal_b[x]));
                 T insertion (distances_ptr[pos_y + x + 1]);
                 T deletion  (distances_ptr[pos_y + cols_distance + x]);
@@ -248,14 +252,14 @@ void apply(const T* signal_a, const unsigned int size_a,
  * @param path          the resulting path
  */
 template<typename T>
-void apply(const std::vector<T> &signal_a,
-           const std::vector<T> &signal_b,
-           const std::vector<bool> &mask,
-           path::WarpPath<T> &path)
+void apply(const std::vector<T>    &signal_a,
+           const std::vector<T>    &signal_b,
+           const Mask              &mask,
+           path::WarpPath<T>       &path)
 {
     assert(signal_a.size() != 0);
     assert(signal_b.size() != 0);
-    assert(mask.size() == signal_a.size() * signal_b.size());
+    assert(mask.size == signal_a.size() * signal_b.size());
     /// signal_a is rows
     /// signal_b is cols
     unsigned int steps_y(signal_a.size());
@@ -275,7 +279,7 @@ void apply(const std::vector<T> &signal_a,
         int pos_y = y * cols_distance;
         int pos_m = y * cols_mask;
         for(unsigned int x = 0 ; x < steps_x; ++x) {
-            if(mask.at(pos_m + x)) {
+            if(mask.data[pos_m + x]) {
                 T cost      (distances::def_distance(siga_ptr[y], sigb_ptr[x]));
                 T insertion (distances_ptr[pos_y + x + 1]);
                 T deletion  (distances_ptr[pos_y + cols_distance + x]);

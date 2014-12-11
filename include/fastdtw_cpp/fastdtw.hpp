@@ -62,7 +62,7 @@ void apply(const std::vector<T> &signal_a,
         sub_path = path::WarpPath<T>();
         dtw::apply(pyr_a.levelPtr(i), size_a,
                    pyr_b.levelPtr(i), size_b,
-                   p.data(),
+                   p.mask(),
                    sub_path);
     }
     path = sub_path;
@@ -71,7 +71,7 @@ void apply(const std::vector<T> &signal_a,
 template<typename T, unsigned int Radius>
 void apply(const std::vector<T> &signal_a,
            const std::vector<T> &signal_b,
-           path::WarpPath<T> &path)
+           path::WarpPath<T>    &path)
 {
     /// signal_a is rows
     /// signal_b is cols
@@ -107,9 +107,10 @@ void apply(const std::vector<T> &signal_a,
         size_b = pyr_b.levelSize(i);
 
         sub_path = path::WarpPath<T>();
+        Mask mask = p.mask();
         dtw::apply(pyr_a.levelPtr(i), size_a,
                    pyr_b.levelPtr(i), size_b,
-                   p.data(),
+                   mask,
                    sub_path);
     }
     path = sub_path;

@@ -2,10 +2,10 @@
 #define PROJECTION_HPP
 
 #include <fastdtw_cpp/path.hpp>
+#include <fastdtw_cpp/mask.hpp>
 
 namespace fastdtw_cpp {
 namespace projection {
-
 template<unsigned int Radius, unsigned int Scale>
 /**
  * @brief The ProjectionIDC enables a index based projection.
@@ -231,8 +231,13 @@ public:
         height_(_height * _scale + _off_height),
         width_(_width  * _scale + _off_width),
         scale_(_scale),
-        data_(height_ * width_, false)
+        data_(new bool [height_ * width_])
     {
+    }
+
+    virtual ~Projection()
+    {
+        delete[] data_;
     }
 
     /**
@@ -296,7 +301,7 @@ public:
         for(unsigned int it_y(anchor_y) ; it_y < max_y ; ++it_y) {
             unsigned int pos(it_y * width_);
             for(unsigned int it_x(anchor_x) ; it_x < max_x ; ++it_x) {
-                data_.at(pos + it_x) = true;
+                data_[pos + it_x] = true;
             }
         }
     }
@@ -345,7 +350,7 @@ public:
      * @return      true for projected path element
      */
     inline bool at(const unsigned int x, const unsigned int y) const {
-        return data_.at(y * width_ + x);
+        return data_[y * width_ + x];
     }
 
     /**
@@ -366,9 +371,9 @@ public:
         return height_;
     }
 
-    inline const std::vector<bool>& data() const
+    inline const Mask mask() const
     {
-        return data_;
+        return Mask(data_, width_ * height_);
     }
 
 private:
@@ -391,20 +396,22 @@ private:
         unsigned int max_x(std::min(width_, x + scale_));
 
         if(off_x < width_)
-            for(unsigned it_y(min_y) ; it_y < max_y; ++it_y)
-                data_.at(it_y * width_ + off_x) = true;
+            for(unsigned it_y(min_y) ; it_y < max_y; ++it_y) {
+                data_[it_y * width_ + off_x] = true;
+                // data_.at(it_y * width_ + off_x) = true;
+            }
 
         if(off_y < height_) {
             unsigned int pos(off_y * width_);
             for(unsigned it_x(min_x) ; it_x < max_x; ++it_x)
-                data_.at(pos + it_x) = true;
+                data_[pos + it_x] = true;
         }
     }
 
     unsigned int height_;
     unsigned int width_;
     unsigned int scale_;
-    std::vector<bool> data_;
+    bool        *data_;
 };
 }
 }

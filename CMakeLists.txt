@@ -6,8 +6,8 @@ project(fastdtw_cpp)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED)
 
-set(CMAKE_BUILD_TYPE Release)
-set(FAST_DTW_FLAGS "-O3 -fprefetch-loop-arrays -ffast-math -fforce-addr -falign-functions=4 -funroll-loops -march=core2")
+set(CMAKE_BUILD_TYPE Debug)
+set(FAST_DTW_FLAGS "-O3")
 set(CMAKE_CXX_FLAGS_RELEASE ${FAST_DTW_FLAGS})
 
 find_package(OpenCV)
@@ -42,6 +42,7 @@ add_executable(fastdtw_cpp
     include/fastdtw_cpp/path.hpp
     include/fastdtw_cpp/projection.hpp
     include/fastdtw_cpp/utils.hpp
+    include/fastdtw_cpp/mask.hpp
     include/fastdtw_cpp/downsampling.hpp
     src/fastdtw_cpp.cpp
 )
