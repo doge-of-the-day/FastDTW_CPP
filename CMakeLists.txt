@@ -6,11 +6,11 @@ project(fastdtw_cpp)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED)
 
-set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_BUILD_TYPE Debug)
 set(FAST_DTW_FLAGS "-O3")
 set(CMAKE_CXX_FLAGS_RELEASE ${FAST_DTW_FLAGS})
 
-find_package(OpenCV)
+find_package(OpenCV QUIET)
 
 catkin_package(
   INCLUDE_DIRS include
@@ -18,10 +18,6 @@ catkin_package(
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
 )
-
-
-
-#### TODO : REMOVE BUILD ####
 
 ###########
 ## Build ##
@@ -48,10 +44,15 @@ add_executable(fastdtw_cpp
 )
 
 if(${OpenCV_FOUND})
-add_executable(path_visual
+add_executable(fastdtw_path_visual
     src/path_visual.cpp
 )
-target_link_libraries(path_visual
+target_link_libraries(fastdtw_path_visual
     ${OpenCV_LIBRARIES}
 )
+
+find_package(CUDA QUIET)
+if(${CUDA_FOUND})
+message("FASTDTW CUDA EXTENSION WILL BE BUILT")
+endif()
 endif()

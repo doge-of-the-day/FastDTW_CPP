@@ -10,53 +10,53 @@ void normalize(const std::vector<float> &sig, const float min,
     float range = max - min;
     for(std::vector<float>::const_iterator it = sig.begin() ; it != sig.end();
         ++it) {
-        normed.push_back((*it - min) / range);
+        normed.push_back((*it + min) / range);
     }
+}
 }
 
-void shift(const std::vector<float> &sig,
-           std::vector<float> &shifted)
+inline void initRandom()
 {
-    int shift = rand() % sig.size();
-    for(unsigned int i = 0 ; i < sig.size() ; ++i) {
-        shifted.push_back(sig.at((i + shift) % sig.size()));
-    }
+    srand (time(NULL));
 }
+
+inline float getRandom(const float prev)
+{
+    return (prev + (rand() % 1000 - 500) * 0.001f);
 }
 
 int main(int argc, char *argv[])
 {
+    int   size(1000);
+    float max( 10.f);
+    float min(-10.f);
+    float norm(0.1f);
+    std::deque<float> a(size);
+    std::deque<float> b(size);
+
+    initRandom();
+    a.at(0) = 0.0f;
+    b.at(0) = 0.0f;
+    for(unsigned int i = 1 ; i < size ; ++i) {
+        a.at(i) = std::min(max, std::max(min, getRandom(a.at(i - 1))));
+        b.at(i) = std::min(max, std::max(min, getRandom(b.at(i - 1))));
+    }
+
+    int wait_time(50);
 
     while(true) {
-        int size(1000);
         cv::Mat visual(size, size * 2, CV_8UC3, cv::Scalar::all(0));
 
-        srand (time(NULL));
         std::vector<float> signal_a;
         std::vector<float> signal_b;
-        float max_a(std::numeric_limits<float>::min());
-        float min_a(std::numeric_limits<float>::max());
-        float prev(10.f);
-        for(unsigned int i = 0 ; i < size ; ++i) {
-            float a = (prev + (rand() % 1000 ) * 0.01f) / 2.f;
-            max_a = std::max(a, max_a);
-            min_a = std::min(a, min_a);
-            signal_a.push_back(a);
-            prev = a;
-        }
+        signal_a.assign(a.begin(), a.end());
+        signal_b.assign(b.begin(), b.end());
 
-//        float max_b = max_a;
-//        float min_b = min_b;
-//        shift(signal_a, signal_b);
-        float max_b(std::numeric_limits<float>::min());
-        float min_b(std::numeric_limits<float>::max());
-        for(unsigned int i = 0 ; i < size ; ++i) {
-            float b = (rand() % 1000 ) * 0.01f;
-            max_b = std::max(b, max_b);
-            min_b = std::min(b, min_b);
-            signal_b.push_back(b);
-//            signal_b.push_back(signal_a.at(i) + (10.f * (rand() % 2)));
-        }
+        /// add new signal input
+        a.push_back(std::min(max, std::max(min, getRandom(a.back()))));
+        b.push_back(std::min(max, std::max(min, getRandom(b.back()))));
+        a.pop_front();
+        b.pop_front();
 
         fastdtw_cpp::path::WarpPath<float> p_dtw;
         fastdtw_cpp::dtw::apply(signal_a, signal_b, p_dtw);
@@ -73,32 +73,37 @@ int main(int argc, char *argv[])
             visual_dtw.at<cv::Vec3b>(pos.second, pos.first) = cv::Vec3b(255,0,0);
         }
 
-         for(unsigned int i = 0 ; i < p_fdtw.size() ; ++i) {
+        for(unsigned int i = 0 ; i < p_fdtw.size() ; ++i) {
             std::pair<unsigned int, unsigned int> pos = p_fdtw.at(i);
             visual_dtw.at<cv::Vec3b>(pos.second, pos.first) = cv::Vec3b(0,255,0);
         }
 
-         //// signal and so on
-        std::vector<float> norm_a;
-        std::vector<float> norm_b;
-        normalize(signal_a, min_a, max_a, norm_a);
-        normalize(signal_b, min_b, max_b, norm_b);
+        //// signal and so on
+        cv::Mat visual_signal_a(visual, cv::Rect(size, 0, size, size * 0.5));
+        cv::Mat visual_signal_b(visual, cv::Rect(size, size * 0.5, size, size * 0.5));
+        cv::line(visual_signal_a, cv::Point(0, size * 0.25), cv::Point(size, size * 0.25), cv::Scalar::all(255.0));
+        cv::line(visual_signal_b, cv::Point(0, size * 0.25), cv::Point(size, size * 0.25), cv::Scalar::all(255.0));
 
-        cv::Mat visual_singal(visual, cv::Rect(size, 0, size, size));
-        for(unsigned int i(1) ; i < size ; ++i) {
-            cv::line(visual_singal, cv::Point(i - 1, size * norm_a.at(i - 1)),
-                                    cv::Point(i, size * norm_a.at(i)),
-                                    cv::Scalar(0,80,255));
-            cv::line(visual_singal, cv::Point(i - 1, size * norm_b.at(i - 1)),
-                                    cv::Point(i, size * norm_b.at(i)),
-                                    cv::Scalar(255,255,20));
+        int max_idy = visual_signal_a.rows - 1;
+
+        for(unsigned int i = 1 ; i < size ; ++i) {
+            cv::Point a1(i-1, 0.5 * max_idy - 0.5 * max_idy * norm * signal_a.at(i-1));
+            cv::Point a2(i,   0.5 * max_idy - 0.5 * max_idy * norm * signal_a.at(i));;
+            cv::Point b1(i-1, 0.5 * max_idy - 0.5 * max_idy * norm * signal_b.at(i-1));
+            cv::Point b2(i,   0.5 * max_idy - 0.5 * max_idy * norm * signal_b.at(i));;
+            cv::line(visual_signal_a, a1, a2, cv::Scalar(0,80,255));
+            cv::line(visual_signal_b, b1, b2, cv::Scalar(255,255,20));
         }
 
-        cv::resize(visual,visual,cv::Size(1280, 640));
+//        cv::resize(visual,visual,cv::Size(1280, 640));
         cv::imshow("dtw", visual);
-        int key = cv::waitKey(0) & 0xFF;
+        int key = cv::waitKey(wait_time) & 0xFF;
         if(key == 27)
             return 0;
+        if(key == 171)
+            wait_time = std::max(wait_time - 10, 5);
+        if(key == 173)
+            wait_time = std::min(wait_time + 10, 1000);
     }
 
     return 0;
