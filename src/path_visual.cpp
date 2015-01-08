@@ -3,6 +3,13 @@
 #include <stdlib.h>
 #include <opencv2/opencv.hpp>
 
+#include <boost/assign.hpp>
+#include <boost/date_time.hpp>
+
+#include <lbimproved/dtw.h>
+#ifdef LBIMPROVED
+#endif
+
 namespace {
 void normalize(const std::vector<float> &sig, const float min,
                const float max, std::vector<float> &normed)
@@ -22,7 +29,7 @@ inline void initRandom()
 
 inline float getRandom(const float prev)
 {
-    return (prev + (rand() % 1000 - 500) * 0.001f);
+    return (prev + (rand() % 1000 - 500) * 0.0001f);
 }
 
 int main(int argc, char *argv[])
@@ -31,8 +38,19 @@ int main(int argc, char *argv[])
     float max( 10.f);
     float min(-10.f);
     float norm(0.1f);
-    std::deque<float> a(size);
-    std::deque<float> b(size);
+    std::deque<double>             a(size);
+    std::deque<double>             b(size);
+    std::map<std::string, double> timings = boost::assign::map_list_of
+            ("DTW", 0.0)
+            ("FAST_DTW", 0.0);
+
+#ifdef LBIMPROVED
+    timings.insert(std::make_pair("LB_DTW", 0.0));
+    lbimproved::dtw lbd(size, 2);
+#endif
+#ifdef CUDA
+    timings.insert(std::make_pair("CUDA_DTW", 0.0));
+#endif
 
     initRandom();
     a.at(0) = 0.0f;
@@ -43,12 +61,14 @@ int main(int argc, char *argv[])
     }
 
     int wait_time(50);
+    double cycles(0.0);
 
     while(true) {
+        cycles += 1;
         cv::Mat visual(size, size * 2, CV_8UC3, cv::Scalar::all(0));
 
-        std::vector<float> signal_a;
-        std::vector<float> signal_b;
+        std::vector<double> signal_a;
+        std::vector<double> signal_b;
         signal_a.assign(a.begin(), a.end());
         signal_b.assign(b.begin(), b.end());
 
@@ -58,14 +78,40 @@ int main(int argc, char *argv[])
         a.pop_front();
         b.pop_front();
 
-        fastdtw_cpp::path::WarpPath<float> p_dtw;
+        /// DTW
+        boost::posix_time::ptime start =
+                boost::posix_time::microsec_clock::local_time();
+        fastdtw_cpp::path::WarpPath<double> p_dtw;
         fastdtw_cpp::dtw::apply(signal_a, signal_b, p_dtw);
-        std::cout << " DTW : " << p_dtw.getDistance() << std::endl;
+        boost::posix_time::ptime stop =
+                boost::posix_time::microsec_clock::local_time();
+        boost::posix_time::time_duration ms = (stop-start);
+        timings.at("DTW") += ms.total_milliseconds();
 
-        fastdtw_cpp::path::WarpPath<float> p_fdtw;
-        fastdtw_cpp::fastdtw::apply<float,40>(signal_a, signal_b, p_fdtw);
-        std::cout << " FTDTW : " << p_fdtw.getDistance() << std::endl;
+        /// FASTDTW
+        start = boost::posix_time::microsec_clock::local_time();
+        fastdtw_cpp::path::WarpPath<double> p_fdtw;
+        fastdtw_cpp::fastdtw::apply<double,15>(signal_a, signal_b, p_fdtw);
+        stop = boost::posix_time::microsec_clock::local_time();
+        ms = (stop-start);
+        timings.at("FAST_DTW") += ms.total_milliseconds();
 
+#ifdef LBIMPROVED
+        std::vector<double> lb_signal_a;
+        std::vector<double> lb_signal_b;
+        lb_signal_a.assign(a.begin(), a.end());
+        lb_signal_b.assign(b.begin(), b.end());
+        start = boost::posix_time::microsec_clock::local_time();
+        double lb_cost = lbd.fastdynamic(lb_signal_a, lb_signal_b);
+        stop = boost::posix_time::microsec_clock::local_time();
+        ms = (stop-start);
+        timings.at("LB_DTW") += ms.total_microseconds();
+#endif
+        std::cout << " DTW      : " << timings.at("DTW") / cycles << "ms " << p_dtw.getDistance()  << std::endl;
+        std::cout << " FAST_DTW : " << timings.at("FAST_DTW") / cycles << "ms " << p_fdtw.getDistance() << std::endl;
+#ifdef LBIMPROVED
+        std::cout << " LB_DTW   : " << timings.at("LB_DTW") / cycles / 1000.0 << "ms " << lb_cost << std::endl;
+#endif
 
         cv::Mat visual_dtw(visual, cv::Rect(0,0,size, size));
         for(unsigned int i = 0 ; i < p_dtw.size() ; ++i) {
