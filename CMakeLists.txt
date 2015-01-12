@@ -14,15 +14,6 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 find_package(OpenCV QUIET)
 find_package(Boost  QUIET)
-find_package(SpatialIndex QUIET)
-
-if(${SPATIALINDEX_FOUND})
-message("Building with LBImproved!")
-    set(LB_FILES include/lbimproved/dtw.h
-                 include/lbimproved/querystrategy.h
-                 include/lbimproved/rtreebased.h)
-    add_definitions("-DLBIMPROVED")
-endif()
 
 catkin_package(
   INCLUDE_DIRS  include
@@ -75,7 +66,6 @@ add_executable(fastdtw_path_visual
 target_link_libraries(fastdtw_path_visual
     ${OpenCV_LIBRARIES}
     ${Boost_LIBRARIES}
-    ${SPATIALINDEX_LIBRARIES}
     ucr_dtw
 )
 endif()

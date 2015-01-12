@@ -55,13 +55,6 @@ int main(int argc, char *argv[])
             ("FAST_DTW", 0.0)
             ("UCR_DTW", 0.0);
 
-#ifdef LBIMPROVED
-    timings.insert(std::make_pair("LB_DTW", 0.0));
-    lbimproved::dtw lbd(size, 2);
-#endif
-#ifdef CUDA
-    timings.insert(std::make_pair("CUDA_DTW", 0.0));
-#endif
 
     initRandom();
     a.at(0) = 0.0f;
@@ -115,17 +108,6 @@ int main(int argc, char *argv[])
         ms = (stop-start);
         timings.at("UCR_DTW") += ms.total_milliseconds();
 
-#ifdef LBIMPROVED
-        std::vector<double> lb_signal_a;
-        std::vector<double> lb_signal_b;
-        lb_signal_a.assign(a.begin(), a.end());
-        lb_signal_b.assign(b.begin(), b.end());
-        start = boost::posix_time::microsec_clock::local_time();
-        double lb_cost = lbd.fastdynamic(lb_signal_a, lb_signal_b);
-        stop = boost::posix_time::microsec_clock::local_time();
-        ms = (stop-start);
-        timings.at("LB_DTW") += ms.total_microseconds();
-#endif
         std::cout << " DTW      : "
                   << std::setw(10) << std::setprecision(8)
                   << (timings.at("DTW") / cycles) << "ms "
@@ -145,14 +127,6 @@ int main(int argc, char *argv[])
                   << ucr_index.value
                   << " res:" << res
                   << std::endl;
-#ifdef LBIMPROVED
-        std::cout << " LB_DTW   : "
-                  << std::setw(10) << std::setprecision(8)
-                  << timings.at("LB_DTW") / cycles / 1000.0 << "ms "
-                  << std::setw(10) << std::setprecision(8)
-                  << lb_cost
-                  << std::endl;
-#endif
         std::cout << "---------------------------------------------" << std::endl;
 
         cv::Mat visual_dtw(visual, cv::Rect(0,0,size, size));
