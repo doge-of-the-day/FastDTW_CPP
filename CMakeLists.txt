@@ -68,3 +68,20 @@ target_link_libraries(fastdtw_path_visual
     ${SPATIALINDEX_LIBRARIES}
 )
 endif()
+
+add_library(ucr_dtw
+    src/ucr_dtw/ucr_dtw.c
+    src/ucr_dtw/deque.c
+)
+
+target_link_libraries(ucr_dtw
+    m
+)
+
+add_executable(ucr_dtw_test
+    src/ucr_dtw/test.c
+)
+
+target_link_libraries(ucr_dtw_test
+    ucr_dtw
+)

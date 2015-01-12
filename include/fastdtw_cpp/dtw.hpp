@@ -81,7 +81,7 @@ void apply(const std::vector<T> &signal_a,
     for(unsigned int j = 1 ; j < cols ; ++j)
         distances[j] = std::numeric_limits<T>::infinity();
 
-    distances[0] = 0.f;
+    distances[0] = 0.0;
 
     const T *siga_ptr(signal_a.data());
     const T *sigb_ptr(signal_b.data());
