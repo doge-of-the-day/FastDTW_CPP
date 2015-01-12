@@ -6,8 +6,6 @@
 #include <boost/assign.hpp>
 #include <boost/date_time.hpp>
 
-#include <ucr_dtw/ucr_dtw.h>
-
 #include <stdio.h>
 
 #ifdef LBIMPROVED
@@ -100,14 +98,6 @@ int main(int argc, char *argv[])
         ms = (stop-start);
         timings.at("FAST_DTW") += ms.total_milliseconds();
 
-        /// UCR DTW
-        start = boost::posix_time::microsec_clock::local_time();
-        ucr_index ucr_index;
-        int res = ucr_query(signal_a.data(), signal_a.size(), 200.0, signal_b.data(), signal_b.size(), &ucr_index);
-        stop = boost::posix_time::microsec_clock::local_time();
-        ms = (stop-start);
-        timings.at("UCR_DTW") += ms.total_milliseconds();
-
         std::cout << " DTW      : "
                   << std::setw(10) << std::setprecision(8)
                   << (timings.at("DTW") / cycles) << "ms "
@@ -119,13 +109,6 @@ int main(int argc, char *argv[])
                   << (timings.at("FAST_DTW") / cycles) << "ms "
                   << std::setw(10) << std::setprecision(8)
                   << p_fdtw.getDistance()
-                  << std::endl;
-        std::cout << " UCR_DTW  : "
-                  << std::setw(10) << std::setprecision(8)
-                  << (timings.at("UCR_DTW") / cycles) << "ms "
-                  << std::setw(10) << std::setprecision(8)
-                  << ucr_index.value
-                  << " res:" << res
                   << std::endl;
         std::cout << "---------------------------------------------" << std::endl;
 

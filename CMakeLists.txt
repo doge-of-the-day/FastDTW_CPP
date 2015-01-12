@@ -17,7 +17,7 @@ find_package(Boost  QUIET)
 
 catkin_package(
   INCLUDE_DIRS  include
-  LIBRARIES     ucr_dtw
+#  LIBRARIES     ucr_dtw
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
 )
