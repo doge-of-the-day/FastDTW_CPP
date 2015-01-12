@@ -75,13 +75,11 @@ void apply(const std::vector<T> &signal_a,
     unsigned int rows(steps_y + 1);
     unsigned int cols(steps_x + 1);
     T *distances = new T[rows * cols];
-
     for(unsigned int i = 1 ; i < rows ; ++i)
         distances[i * cols] = std::numeric_limits<T>::infinity();
     for(unsigned int j = 1 ; j < cols ; ++j)
         distances[j] = std::numeric_limits<T>::infinity();
-
-    distances[0] = 0.0;
+    distances[0] = 0.f;
 
     const T *siga_ptr(signal_a.data());
     const T *sigb_ptr(signal_b.data());
@@ -122,13 +120,12 @@ void apply(const std::vector<T> &signal_a,
     unsigned int rows(steps_y + 1);
     unsigned int cols(steps_x + 1);
     T *distances = new T[rows * cols];
-
     for(unsigned int i = 1 ; i < rows ; ++i)
         distances[i * cols] = std::numeric_limits<T>::infinity();
     for(unsigned int j = 1 ; j < cols ; ++j)
         distances[j] = std::numeric_limits<T>::infinity();
 
-    distances[0] = 0.f;
+    distances[0] = 0.0;
 
     const T *siga_ptr(signal_a.data());
     const T *sigb_ptr(signal_b.data());
@@ -170,13 +167,11 @@ void apply(const T* signal_a, const unsigned int size_a,
     unsigned int steps_x(size_b);
     unsigned int rows(steps_y + 1);
     unsigned int cols(steps_x + 1);
-    T distances[rows * cols];
-
+    T *distances = new T[rows * cols];
     for(unsigned int i = 1 ; i < rows ; ++i)
         distances[i * cols] = std::numeric_limits<T>::infinity();
     for(unsigned int j = 1 ; j < cols ; ++j)
         distances[j] = std::numeric_limits<T>::infinity();
-
     distances[0] = 0.f;
 
     for(unsigned int y = 0 ; y < steps_y; ++y) {
@@ -192,6 +187,7 @@ void apply(const T* signal_a, const unsigned int size_a,
     }
     path.setDistance(distances[rows * cols - 1]);
     trace(distances, rows, cols, path);
+    delete[] distances;
 }
 
 /**
@@ -220,9 +216,11 @@ void apply(const T* signal_a, const unsigned int size_a,
     unsigned int cols_distance(steps_x + 1);
     unsigned int cols_mask(size_b);
 
-    std::vector<T> distances(rows_distance * cols_distance, std::numeric_limits<T>::infinity());
-    T *distances_ptr = distances.data();
-    distances_ptr[0] = 0.f;
+    T *distances = new T[rows_distance * cols_distance];
+    for(unsigned int i = 0 ; i < rows_distance ; ++i)
+        for(unsigned int j = 0 ; j < cols_distance ; ++j)
+            distances[i * cols_distance + j] = std::numeric_limits<T>::infinity();
+    distances[0] = 0.f;
 
     for(unsigned int y = 0 ; y < steps_y; ++y) {
         int pos_y(y * cols_distance);
@@ -230,15 +228,16 @@ void apply(const T* signal_a, const unsigned int size_a,
         for(unsigned int x = 0 ; x < steps_x; ++x) {
             if(mask.data[pos_m + x]) {
                 T cost      (distances::def_distance(signal_a[y], signal_b[x]));
-                T insertion (distances_ptr[pos_y + x + 1]);
-                T deletion  (distances_ptr[pos_y + cols_distance + x]);
-                T match     (distances_ptr[pos_y + x]);
-                distances_ptr[pos_y + cols_distance + x + 1] = cost + std::min(insertion, std::min(deletion, match));
+                T insertion (distances[pos_y + x + 1]);
+                T deletion  (distances[pos_y + cols_distance + x]);
+                T match     (distances[pos_y + x]);
+                distances[pos_y + cols_distance + x + 1] = cost + std::min(insertion, std::min(deletion, match));
             }
         }
     }
-    path.setDistance(distances_ptr[rows_distance * cols_distance - 1]);
-    trace(distances_ptr, rows_distance, cols_distance, path);
+    path.setDistance(distances[rows_distance * cols_distance - 1]);
+    trace(distances, rows_distance, cols_distance, path);
+    delete[] distances;
 }
 
 
@@ -268,9 +267,11 @@ void apply(const std::vector<T>    &signal_a,
     unsigned int cols_distance(steps_x + 1);
     unsigned int cols_mask(signal_b.size());
 
-    std::vector<T> distances(rows_distance * cols_distance, std::numeric_limits<T>::infinity());
-    T *distances_ptr = distances.data();
-    distances_ptr[0] = 0.f;
+    T *distances = new T[rows_distance * cols_distance];
+    for(unsigned int i = 0 ; i < rows_distance ; ++i)
+        for(unsigned int j = 0 ; j < cols_distance ; ++j)
+            distances[i * cols_distance + j] = std::numeric_limits<T>::infinity();
+    distances[0] = 0.f;
 
     const T *siga_ptr(signal_a.data());
     const T *sigb_ptr(signal_b.data());
@@ -281,15 +282,16 @@ void apply(const std::vector<T>    &signal_a,
         for(unsigned int x = 0 ; x < steps_x; ++x) {
             if(mask.data[pos_m + x]) {
                 T cost      (distances::def_distance(siga_ptr[y], sigb_ptr[x]));
-                T insertion (distances_ptr[pos_y + x + 1]);
-                T deletion  (distances_ptr[pos_y + cols_distance + x]);
-                T match     (distances_ptr[pos_y + x]);
-                distances_ptr[pos_y + cols_distance + x + 1] = cost + std::min(insertion, std::min(deletion, match));
+                T insertion (distances[pos_y + x + 1]);
+                T deletion  (distances[pos_y + cols_distance + x]);
+                T match     (distances[pos_y + x]);
+                distances[pos_y + cols_distance + x + 1] = cost + std::min(insertion, std::min(deletion, match));
             }
         }
     }
-    path.setDistance(distances_ptr[rows_distance * cols_distance - 1]);
-    trace(distances_ptr, rows_distance, cols_distance, path);
+    path.setDistance(distances[rows_distance * cols_distance - 1]);
+    trace(distances, rows_distance, cols_distance, path);
+    delete[] distances;
 }
 
 template<typename T>
@@ -308,24 +310,27 @@ void apply(const T* signal_a, const unsigned int size_a,
 
     unsigned int rows_distance(size_a + 1);
     unsigned int cols_distance(size_b + 1);
-    std::vector<T> distances(rows_distance * cols_distance, std::numeric_limits<T>::infinity());
-    T *distances_ptr = distances.data();
-    distances_ptr[0] = 0.f;
+    T *distances = new T[rows_distance * cols_distance];
+    for(unsigned int i = 0 ; i < rows_distance ; ++i)
+        for(unsigned int j = 0 ; j < cols_distance ; ++j)
+            distances[i * cols_distance + j] = std::numeric_limits<T>::infinity();
+    distances[0] = 0.f;
 
     for(unsigned int it(0) ; it < indeces ; ++it) {
         int pos_y(it * cols_distance);
         int max_x(max_xs[it]);
         for(unsigned int x(min_xs[it]) ; x <= max_x ; ++x) {
             T cost      (distances::def_distance(signal_a[it], signal_b[x]));
-            T insertion (distances_ptr[pos_y + x + 1]);
-            T deletion  (distances_ptr[pos_y + cols_distance + x]);
-            T match     (distances_ptr[pos_y + x]);
-            distances_ptr[pos_y + cols_distance + x + 1] = cost + std::min(insertion, std::min(deletion, match));
+            T insertion (distances[pos_y + x + 1]);
+            T deletion  (distances[pos_y + cols_distance + x]);
+            T match     (distances[pos_y + x]);
+            distances[pos_y + cols_distance + x + 1] = cost + std::min(insertion, std::min(deletion, match));
         }
     }
 
-    path.setDistance(distances_ptr[rows_distance * cols_distance - 1]);
-    trace(distances_ptr, rows_distance, cols_distance, path);
+    path.setDistance(distances[rows_distance * cols_distance - 1]);
+    trace(distances, rows_distance, cols_distance, path);
+    delete[] distances;
 }
 }
 }

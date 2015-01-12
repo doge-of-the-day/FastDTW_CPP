@@ -32,7 +32,6 @@ include_directories(
     include
     ${Boost_INCLUDE_DIRS}
     ${OpenCV_INCLUDE_DIRS}
-    ${SPATIALINDEX_INCLUDE_DIRS}
 )
 
 ## Declare a cpp library
@@ -48,32 +47,18 @@ add_executable(fastdtw_cpp
     src/fastdtw_cpp.cpp
 )
 
-
-add_library(ucr_dtw
-    src/ucr_dtw/ucr_dtw.c
-    src/ucr_dtw/deque.c
+add_library(dtw_c
+    include/dtw_c/dtw_c.h
+    src/dtw_c/dtw_c.c
 )
 
-target_link_libraries(ucr_dtw
-    m
-)
 
 if(${OpenCV_FOUND} AND ${Boost_FOUND})
 add_executable(fastdtw_path_visual
     src/path_visual.cpp
-    ${LB_FILES}
 )
 target_link_libraries(fastdtw_path_visual
     ${OpenCV_LIBRARIES}
     ${Boost_LIBRARIES}
-    ucr_dtw
 )
 endif()
-
-add_executable(ucr_dtw_test
-    src/ucr_dtw/test.c
-)
-
-target_link_libraries(ucr_dtw_test
-    ucr_dtw
-)
