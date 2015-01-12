@@ -26,7 +26,7 @@ endif()
 
 catkin_package(
   INCLUDE_DIRS  include
-#  LIBRARIES     fastdtw_cpp
+  LIBRARIES     ucr_dtw
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
 )
@@ -57,17 +57,6 @@ add_executable(fastdtw_cpp
     src/fastdtw_cpp.cpp
 )
 
-if(${OpenCV_FOUND} AND ${Boost_FOUND})
-add_executable(fastdtw_path_visual
-    src/path_visual.cpp
-    ${LB_FILES}
-)
-target_link_libraries(fastdtw_path_visual
-    ${OpenCV_LIBRARIES}
-    ${Boost_LIBRARIES}
-    ${SPATIALINDEX_LIBRARIES}
-)
-endif()
 
 add_library(ucr_dtw
     src/ucr_dtw/ucr_dtw.c
@@ -77,6 +66,19 @@ add_library(ucr_dtw
 target_link_libraries(ucr_dtw
     m
 )
+
+if(${OpenCV_FOUND} AND ${Boost_FOUND})
+add_executable(fastdtw_path_visual
+    src/path_visual.cpp
+    ${LB_FILES}
+)
+target_link_libraries(fastdtw_path_visual
+    ${OpenCV_LIBRARIES}
+    ${Boost_LIBRARIES}
+    ${SPATIALINDEX_LIBRARIES}
+    ucr_dtw
+)
+endif()
 
 add_executable(ucr_dtw_test
     src/ucr_dtw/test.c

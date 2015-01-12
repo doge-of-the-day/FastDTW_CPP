@@ -6,9 +6,19 @@
 #include <boost/assign.hpp>
 #include <boost/date_time.hpp>
 
-#include <lbimproved/dtw.h>
+#include <ucr_dtw/ucr_dtw.h>
+
+#include <stdio.h>
+
 #ifdef LBIMPROVED
+#include <lbimproved/dtw.h>
 #endif
+
+
+extern "C" {
+int32_t
+ucr_query(double *, int32_t , double , double *, int32_t , struct ucr_index *);
+}
 
 namespace {
 void normalize(const std::vector<float> &sig, const float min,
@@ -42,7 +52,8 @@ int main(int argc, char *argv[])
     std::deque<double>             b(size);
     std::map<std::string, double> timings = boost::assign::map_list_of
             ("DTW", 0.0)
-            ("FAST_DTW", 0.0);
+            ("FAST_DTW", 0.0)
+            ("UCR_DTW", 0.0);
 
 #ifdef LBIMPROVED
     timings.insert(std::make_pair("LB_DTW", 0.0));
@@ -96,6 +107,14 @@ int main(int argc, char *argv[])
         ms = (stop-start);
         timings.at("FAST_DTW") += ms.total_milliseconds();
 
+        /// UCR DTW
+        start = boost::posix_time::microsec_clock::local_time();
+        ucr_index ucr_index;
+        int res = ucr_query(signal_a.data(), signal_a.size(), 200.0, signal_b.data(), signal_b.size(), &ucr_index);
+        stop = boost::posix_time::microsec_clock::local_time();
+        ms = (stop-start);
+        timings.at("UCR_DTW") += ms.total_milliseconds();
+
 #ifdef LBIMPROVED
         std::vector<double> lb_signal_a;
         std::vector<double> lb_signal_b;
@@ -107,11 +126,34 @@ int main(int argc, char *argv[])
         ms = (stop-start);
         timings.at("LB_DTW") += ms.total_microseconds();
 #endif
-        std::cout << " DTW      : " << timings.at("DTW") / cycles << "ms " << p_dtw.getDistance()  << std::endl;
-        std::cout << " FAST_DTW : " << timings.at("FAST_DTW") / cycles << "ms " << p_fdtw.getDistance() << std::endl;
+        std::cout << " DTW      : "
+                  << std::setw(10) << std::setprecision(8)
+                  << (timings.at("DTW") / cycles) << "ms "
+                  << std::setw(10) << std::setprecision(8)
+                  << p_dtw.getDistance()
+                  << std::endl;
+        std::cout << " FAST_DTW : "
+                  << std::setw(10) << std::setprecision(8)
+                  << (timings.at("FAST_DTW") / cycles) << "ms "
+                  << std::setw(10) << std::setprecision(8)
+                  << p_fdtw.getDistance()
+                  << std::endl;
+        std::cout << " UCR_DTW  : "
+                  << std::setw(10) << std::setprecision(8)
+                  << (timings.at("UCR_DTW") / cycles) << "ms "
+                  << std::setw(10) << std::setprecision(8)
+                  << ucr_index.value
+                  << " res:" << res
+                  << std::endl;
 #ifdef LBIMPROVED
-        std::cout << " LB_DTW   : " << timings.at("LB_DTW") / cycles / 1000.0 << "ms " << lb_cost << std::endl;
+        std::cout << " LB_DTW   : "
+                  << std::setw(10) << std::setprecision(8)
+                  << timings.at("LB_DTW") / cycles / 1000.0 << "ms "
+                  << std::setw(10) << std::setprecision(8)
+                  << lb_cost
+                  << std::endl;
 #endif
+        std::cout << "---------------------------------------------" << std::endl;
 
         cv::Mat visual_dtw(visual, cv::Rect(0,0,size, size));
         for(unsigned int i = 0 ; i < p_dtw.size() ; ++i) {
@@ -141,7 +183,7 @@ int main(int argc, char *argv[])
             cv::line(visual_signal_b, b1, b2, cv::Scalar(255,255,20));
         }
 
-//        cv::resize(visual,visual,cv::Size(1280, 640));
+        //        cv::resize(visual,visual,cv::Size(1280, 640));
         cv::imshow("dtw", visual);
         int key = cv::waitKey(wait_time) & 0xFF;
         if(key == 27)

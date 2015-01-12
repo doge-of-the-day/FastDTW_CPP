@@ -11,8 +11,8 @@
 * Time series are represented using STL vectors.
 */
 
-#ifndef DTW
-#define DTW
+#ifndef LB_DTW_H_
+#define LB_DTW_H_
 
 #include <iostream>
 #include<vector>
@@ -698,6 +698,6 @@ double l1diff(const vector<double> &  v, const vector<double> & w) {
 	return ans;
 }
 }
-#endif
+#endif // LB_DTW_H_
 
 

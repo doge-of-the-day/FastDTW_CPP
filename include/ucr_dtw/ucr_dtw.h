@@ -45,6 +45,9 @@ struct ucr_query
     double          *q, *u, *l, *qo, *uo, *lo;
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 struct ucr_query*
 ucr_query_new(double* query, int32_t m, double r);
 
@@ -56,3 +59,6 @@ ucr_query_execute(struct ucr_query *query, struct ucr_buffer *buffer, struct ucr
 
 int32_t
 ucr_query(double *q, int32_t m, double r, double *buffer, int32_t buflen, struct ucr_index *result);
+#ifdef __cplusplus
+}
+#endif
