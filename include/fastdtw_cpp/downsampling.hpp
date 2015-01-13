@@ -1,13 +1,12 @@
 #ifndef DOWNSAMPLING_HPP
 #define DOWNSAMPLING_HPP
 
+#include "downsampling.h"
+#include <cmath>
+#include <algorithm>
 
 namespace fastdtw_cpp {
-namespace utils {
-
-
-#define FILTER_TYPE_BOX      0
-#define FILTER_TYPE_BINOMIAL 1
+namespace downsampling {
 
 template <typename base_type, unsigned int filter_type, unsigned int filter_size>
 struct filter {
@@ -22,7 +21,11 @@ struct filter {
 
 template <typename base_type, unsigned int n>
 struct normalization {
+#if __cplusplus > 199711L
+    static constexpr base_type value = ((base_type)1.0) / ((base_type)n);
+#else
     static const base_type value = ((base_type)1.0) / ((base_type)n);
+#endif
 };
 
 
@@ -218,16 +221,28 @@ struct binomial_coefficient {
 
 template <typename base_type, unsigned int kernel_size>
 struct binomial_normalization {
+#if __cplusplus > 199711L
+    static constexpr base_type value = ((base_type)1.0) / ((base_type)(0x1 << (kernel_size - 1)));
+#else
     static const base_type value = ((base_type)1.0) / ((base_type)(0x1 << (kernel_size - 1)));
+#endif
 };
 
 
 template <typename base_type, unsigned int kernel_size, unsigned int idx>
 struct binomial_kernel {
+#if __cplusplus > 199711L
+    static constexpr base_type value = (
+        ((base_type)binomial_coefficient<kernel_size - 1, idx>::value) *
+        binomial_normalization<base_type, kernel_size>::value
+    );
+#else
     static const base_type value = (
         ((base_type)binomial_coefficient<kernel_size - 1, idx>::value) *
         binomial_normalization<base_type, kernel_size>::value
     );
+#endif
+
 };
 
 template <typename base_type, unsigned int filter_size>

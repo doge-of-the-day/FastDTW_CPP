@@ -1,5 +1,4 @@
 #include <fastdtw_cpp/fastdtw.hpp>
-#include <dtw_c/dtw_c.h>
 #include <time.h>
 #include <stdlib.h>
 #include <opencv2/opencv.hpp>
@@ -43,7 +42,7 @@ inline float getRandom(const float prev)
 
 int main(int argc, char *argv[])
 {
-    int   size(1000);
+    unsigned int   size(1000);
     float max( 10.f);
     float min(-10.f);
     float norm(0.1f);
@@ -52,7 +51,7 @@ int main(int argc, char *argv[])
     std::map<std::string, double> timings = boost::assign::map_list_of
             ("DTW", 0.0)
             ("FAST_DTW", 0.0)
-            ("DTW_C", 0.0);
+            ("DTW_NO_PATH", 0.0);
 
 
     initRandom();
@@ -94,38 +93,37 @@ int main(int argc, char *argv[])
         /// FASTDTW
         start = boost::posix_time::microsec_clock::local_time();
         fastdtw_cpp::path::WarpPath<double> p_fdtw;
-        fastdtw_cpp::fastdtw::apply<double,15>(signal_a, signal_b, p_fdtw);
+        fastdtw_cpp::fastdtw::applyDyn(signal_a, signal_b, 15, p_fdtw);
         stop = boost::posix_time::microsec_clock::local_time();
         ms = (stop-start);
         timings.at("FAST_DTW") += ms.total_milliseconds();
 
-        /// DTW_C
+        /// DTW_NO_PATH
         start = boost::posix_time::microsec_clock::local_time();
-        double dist_c = 0.0;
-        apply_ddtw_c(signal_a.data(), signal_a.size(),
-                     signal_b.data(), signal_b.size(),
-                     &dist_c);
+        double dtw_dist = 0.0;
+        fastdtw_cpp::dtw::apply<double>(signal_a, signal_b, dtw_dist);
         stop = boost::posix_time::microsec_clock::local_time();
         ms = (stop-start);
-        timings.at("DTW_C") += ms.total_milliseconds();
+        timings.at("DTW_NO_PATH") += ms.total_milliseconds();
 
-        std::cout << " DTW      : "
+
+        std::cout << " DTW         : "
                   << std::setw(10) << std::setprecision(8)
                   << (timings.at("DTW") / cycles) << "ms "
                   << std::setw(10) << std::setprecision(8)
                   << p_dtw.getDistance()
                   << std::endl;
-        std::cout << " FAST_DTW : "
+        std::cout << " FAST_DTW    : "
                   << std::setw(10) << std::setprecision(8)
                   << (timings.at("FAST_DTW") / cycles) << "ms "
                   << std::setw(10) << std::setprecision(8)
                   << p_fdtw.getDistance()
                   << std::endl;
-        std::cout << " DTW_C    : "
+        std::cout << " DTW_NO_PATH : "
                   << std::setw(10) << std::setprecision(8)
-                  << (timings.at("DTW_C") / cycles) << "ms "
+                  << (timings.at("DTW_NO_PATH") / cycles) << "ms "
                   << std::setw(10) << std::setprecision(8)
-                  << dist_c
+                  << dtw_dist
                   << std::endl;
         std::cout << "---------------------------------------------" << std::endl;
 
