@@ -8,16 +8,6 @@
 
 #include <stdio.h>
 
-#ifdef LBIMPROVED
-#include <lbimproved/dtw.h>
-#endif
-
-
-extern "C" {
-int32_t
-ucr_query(double *, int32_t , double , double *, int32_t , struct ucr_index *);
-}
-
 namespace {
 void normalize(const std::vector<float> &sig, const float min,
                const float max, std::vector<float> &normed)
