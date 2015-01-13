@@ -1,4 +1,5 @@
 #include <fastdtw_cpp/fastdtw.hpp>
+#include <dtw_c/dtw_c.h>
 #include <time.h>
 #include <stdlib.h>
 #include <opencv2/opencv.hpp>
@@ -51,7 +52,7 @@ int main(int argc, char *argv[])
     std::map<std::string, double> timings = boost::assign::map_list_of
             ("DTW", 0.0)
             ("FAST_DTW", 0.0)
-            ("UCR_DTW", 0.0);
+            ("DTW_C", 0.0);
 
 
     initRandom();
@@ -98,6 +99,16 @@ int main(int argc, char *argv[])
         ms = (stop-start);
         timings.at("FAST_DTW") += ms.total_milliseconds();
 
+        /// DTW_C
+        start = boost::posix_time::microsec_clock::local_time();
+        double dist_c = 0.0;
+        apply_ddtw_c(signal_a.data(), signal_a.size(),
+                     signal_b.data(), signal_b.size(),
+                     &dist_c);
+        stop = boost::posix_time::microsec_clock::local_time();
+        ms = (stop-start);
+        timings.at("DTW_C") += ms.total_milliseconds();
+
         std::cout << " DTW      : "
                   << std::setw(10) << std::setprecision(8)
                   << (timings.at("DTW") / cycles) << "ms "
@@ -109,6 +120,12 @@ int main(int argc, char *argv[])
                   << (timings.at("FAST_DTW") / cycles) << "ms "
                   << std::setw(10) << std::setprecision(8)
                   << p_fdtw.getDistance()
+                  << std::endl;
+        std::cout << " DTW_C    : "
+                  << std::setw(10) << std::setprecision(8)
+                  << (timings.at("DTW_C") / cycles) << "ms "
+                  << std::setw(10) << std::setprecision(8)
+                  << dist_c
                   << std::endl;
         std::cout << "---------------------------------------------" << std::endl;
 
