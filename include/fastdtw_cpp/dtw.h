@@ -1,6 +1,7 @@
 #ifndef DTW_H
 #define DTW_H
 
+#include <functional>
 #include <vector>
 #include "path.h"
 #include "mask.h"
@@ -41,6 +42,18 @@ template<typename T>
 void apply(const std::vector<T> &signal_a,
            const std::vector<T> &signal_b,
            path::WarpPath<T>    &path);
+
+/**
+ * @brief Standard dtw algorithm only calculating the distance.
+ * @param signal_a      the first signal
+ * @param signal_b      the second signal
+ * @param path          the warp path
+ */
+template<typename T>
+void applyProb(const std::vector<T>          &signal_a,
+               const std::vector<T>          &signal_b,
+               path::WarpPath<T>             &path,
+               double &distr);
 
 /**
  * @brief Apply the dtw using arrays and element counts.

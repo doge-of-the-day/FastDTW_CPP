@@ -5,6 +5,7 @@
 #include "utils.hpp"
 #include "projection.h"
 #include "projection.hpp"
+#include "fastdtw.h"
 
 #include <iostream>
 #include <fstream>

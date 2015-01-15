@@ -5,7 +5,7 @@
 #include <complex>
 #include <assert.h>
 
-
+#include "dtw.h"
 #include "distances.hpp"
 #include "path.h"
 #include "mask.h"
@@ -163,6 +163,45 @@ void apply(const T* signal_a, const unsigned int size_a,
     trace(distances, rows, cols, path);
     delete[] distances;
 }
+
+template<typename T>
+void applyProb(const T* signal_a, const unsigned int size_a,
+               const T* signal_b, const unsigned int size_b,
+               path::WarpPath<T> &path,
+               double &distr)
+{
+    auto x = 1;
+    assert(size_a != 0);
+    assert(size_b != 0);
+    /// signal_a is rows
+    /// signal_b is cols
+    unsigned int steps_y(size_a);
+    unsigned int steps_x(size_b);
+    unsigned int rows(steps_y + 1);
+    unsigned int cols(steps_x + 1);
+    T *distances = new T[rows * cols];
+    for(unsigned int i = 1 ; i < rows ; ++i)
+        distances[i * cols] = std::numeric_limits<T>::infinity();
+    for(unsigned int j = 1 ; j < cols ; ++j)
+        distances[j] = std::numeric_limits<T>::infinity();
+    distances[0] = 0.f;
+
+    for(unsigned int y = 0 ; y < steps_y; ++y) {
+        int pos_y = y * cols;
+        for(unsigned int x = 0 ; x < steps_x; ++x) {
+            T cost      (distances::def_distance(signal_a[y], signal_b[x]));
+            T insertion (distances[pos_y + x + 1]);
+            T deletion  (distances[pos_y + cols + x]);
+            T match     (distances[pos_y + x]);
+            distances[pos_y + cols + x + 1] = cost + std::min(insertion, std::min(deletion, match));
+
+        }
+    }
+    path.setDistance(distances[rows * cols - 1]);
+    trace(distances, rows, cols, path);
+    delete[] distances;
+}
+
 
 template<typename T>
 void apply(const T* signal_a, const unsigned int size_a,

@@ -1,14 +1,18 @@
 #ifndef PROJECTION_IDC_HPP
 #define PROJECTION_IDC_HPP
 
+#include <assert.h>
 #include "projection_idc.h"
+#include <iostream>
 
+namespace fastdtw_cpp {
+namespace projection {
 template<unsigned int Radius, unsigned int Scale>
-ProjectionIDC::ProjectionIDC<Radius, Scale>(
+ProjectionIDC<Radius, Scale>::ProjectionIDC(
         const unsigned int src_height,
         const unsigned int src_width,
-        const unsigned int off_height = 0,
-        const unsigned int off_width = 0) :
+        const unsigned int off_height,
+        const unsigned int off_width) :
     height_(src_height * Scale + off_height),
     width_(src_width * Scale + off_width),
     max_idx_(width_ - 1),
@@ -23,7 +27,7 @@ ProjectionIDC::ProjectionIDC<Radius, Scale>(
 }
 
 template<unsigned int Radius, unsigned int Scale>
-ProjectionIDC::ProjectionIDC<Radius, Scale>(
+ProjectionIDC<Radius, Scale>::ProjectionIDC(
         const ProjectionIDC &other) :
     height_(other.height_),
     width_(other.width_),
@@ -39,8 +43,8 @@ ProjectionIDC::ProjectionIDC<Radius, Scale>(
 }
 
 
-template<typename T>
 template<unsigned int Radius, unsigned int Scale>
+template<typename T>
 void ProjectionIDC<Radius, Scale>::project(const path::WarpPath<T> &path)
 {
     assert(path.size() > 1);
@@ -158,11 +162,8 @@ inline void ProjectionIDC<Radius, Scale>::updateMaxXs(const int y,
         max_xs_ptr_[y] = std::max(0, std::min(x, max_idx_));
     }
 }
-
-
-
-
-
+}
+}
 
 #endif // PROJECTION_IDC_HPP
 

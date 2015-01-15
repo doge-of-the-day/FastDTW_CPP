@@ -6,10 +6,10 @@
 namespace fastdtw_cpp {
 namespace projection {
 
-template<unsigned int Radius, unsigned int Scale>
 /**
  * @brief The ProjectionIDC enables a index based projection.
  */
+template<unsigned int Radius, unsigned int Scale>
 class ProjectionIDC {
 public:
     /**

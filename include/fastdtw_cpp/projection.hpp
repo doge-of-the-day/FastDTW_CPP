@@ -1,8 +1,9 @@
 #ifndef PROJECTION_HPP
 #define PROJECTION_HPP
 
-#include <fastdtw_cpp/path.hpp>
+#include <fastdtw_cpp/path.h>
 #include <fastdtw_cpp/mask.h>
+#include <fastdtw_cpp/projection.h>
 
 #include <assert.h>
 #include <iostream>
@@ -43,8 +44,6 @@ void Projection::project(const path::WarpPath<T> &path,
     unsigned int last(path.size() - 1);
     block(x_ptr[last], y_ptr[last], radius);
 }
-
-
 }
 }
 

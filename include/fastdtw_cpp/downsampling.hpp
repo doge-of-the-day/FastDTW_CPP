@@ -21,11 +21,7 @@ struct filter {
 
 template <typename base_type, unsigned int n>
 struct normalization {
-#if __cplusplus > 199711L
     static constexpr base_type value = ((base_type)1.0) / ((base_type)n);
-#else
-    static const base_type value = ((base_type)1.0) / ((base_type)n);
-#endif
 };
 
 
@@ -221,28 +217,16 @@ struct binomial_coefficient {
 
 template <typename base_type, unsigned int kernel_size>
 struct binomial_normalization {
-#if __cplusplus > 199711L
     static constexpr base_type value = ((base_type)1.0) / ((base_type)(0x1 << (kernel_size - 1)));
-#else
-    static const base_type value = ((base_type)1.0) / ((base_type)(0x1 << (kernel_size - 1)));
-#endif
 };
 
 
 template <typename base_type, unsigned int kernel_size, unsigned int idx>
 struct binomial_kernel {
-#if __cplusplus > 199711L
     static constexpr base_type value = (
         ((base_type)binomial_coefficient<kernel_size - 1, idx>::value) *
         binomial_normalization<base_type, kernel_size>::value
     );
-#else
-    static const base_type value = (
-        ((base_type)binomial_coefficient<kernel_size - 1, idx>::value) *
-        binomial_normalization<base_type, kernel_size>::value
-    );
-#endif
-
 };
 
 template <typename base_type, unsigned int filter_size>
@@ -293,7 +277,7 @@ void downSample(
     //
     // convole left region (boundary-safe)
     //
-    for (int i = i_min; i < i_lbd; i++) {
+    for (int i = i_min; i < i_lbd; ++i) {
         //
         for (int k = 0; k < filter_size; k++) {
             register int idx = k + j - filter_bounds<filter_size>::left;
@@ -311,7 +295,7 @@ void downSample(
     //
     // convole inner region
     //
-    for (int i = i_lbd; i <= i_ubd; i++) {
+    for (int i = i_lbd; i <= i_ubd; ++i) {
         target[i] = filter<base_type, filter_type, filter_size>::perform(
             source + j - filter_bounds<filter_size>::left
         );
@@ -320,9 +304,9 @@ void downSample(
     //
     // colvole right region (boundary-safe)
     //
-    for (int i = i_ubd + 1; i <= i_max; i++) {
+    for (int i = i_ubd + 1; i <= i_max; ++i) {
         //
-        for (int k = 0; k < filter_size; k++) {
+        for (int k = 0; k < filter_size; ++k) {
             register int idx = k + j - filter_bounds<filter_size>::left;
             if (idx < 0) idx = 0;
             if (idx >= source_length) idx = source_length - 1;

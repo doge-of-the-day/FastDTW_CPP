@@ -456,7 +456,7 @@ int main(int argc, char *argv[])
     std::cout << path.getDistance() << std::endl;
 
     fastdtw_cpp::path::WarpPath<float> path2;
-    fastdtw_cpp::fastdtw::apply(test, test2, 2, path2, 0);
+    fastdtw_cpp::fastdtw::applyDyn(test, test2, 2, path2);
     std::cout << path2.getDistance() << std::endl;
 
     TEST_mean();
@@ -474,7 +474,7 @@ int main(int argc, char *argv[])
         std::vector<float> v2(1000, 1);
 
         fastdtw_cpp::path::WarpPath<float> distance;
-        fastdtw_cpp::fastdtw::apply<float>(v1, v2, 2, distance, 0);
+        fastdtw_cpp::fastdtw::applyDyn<float>(v1, v2, 2, distance);
         std::cout << distance.getDistance() << std::endl;
 
     }
