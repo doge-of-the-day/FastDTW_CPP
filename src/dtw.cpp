@@ -1,15 +1,13 @@
 #include <fastdtw_cpp/dtw.h>
 #include <fastdtw_cpp/dtw.hpp>
 
-using namespace fastdtw_cpp;
-using namespace dtw;
-using namespace path;
-
+namespace fastdtw_cpp {
+namespace dtw {
 template
 void trace<double>(const double            *data,
                    const unsigned int       rows,
                    const unsigned int       cols,
-                   WarpPath<double>  &path);
+                   path::WarpPath<double>  &path);
 
 template
 void trace<float>(const float             *data,
@@ -128,3 +126,5 @@ void apply<int>(const int* signal_a, const unsigned int size_a,
                 const unsigned int* max_xs,
                 const unsigned int  indeces,
                 path::WarpPath<int> &path);
+}
+}

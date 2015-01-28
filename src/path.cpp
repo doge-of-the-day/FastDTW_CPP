@@ -1,8 +1,8 @@
 #include <fastdtw_cpp/path.h>
 #include <fastdtw_cpp/path.hpp>
 
-using namespace fastdtw_cpp;
-using namespace path;
+namespace fastdtw_cpp {
+namespace path {
 
 template class
 WarpPath<double>;
@@ -12,3 +12,6 @@ WarpPath<float>;
 
 template class
 WarpPath<int>;
+
+}
+}

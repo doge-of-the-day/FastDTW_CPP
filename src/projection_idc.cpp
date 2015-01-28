@@ -1,8 +1,8 @@
 #include <fastdtw_cpp/projection_idc.h>
 #include <fastdtw_cpp/projection_idc.hpp>
 
-using namespace fastdtw_cpp;
-using namespace projection;
+namespace fastdtw_cpp {
+namespace projection {
 
 template class
 ProjectionIDC<0,2>;
@@ -35,3 +35,5 @@ void ProjectionIDC<1,2>::project(const path::WarpPath<double> &path);
 template
 void ProjectionIDC<2,2>::project(const path::WarpPath<double> &path);
 
+}
+}

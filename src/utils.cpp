@@ -1,7 +1,7 @@
 #include <fastdtw_cpp/utils.h>
 
-using namespace fastdtw_cpp;
-using namespace downsampling;
+namespace fastdtw_cpp {
+namespace downsampling {
 
 template class
 SignalPyramid<double, 2>;
@@ -11,3 +11,6 @@ SignalPyramid<float, 2>;
 
 template class
 SignalPyramid<int, 2>;
+
+}
+}
