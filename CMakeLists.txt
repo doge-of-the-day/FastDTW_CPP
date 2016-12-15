@@ -56,31 +56,31 @@ add_library(fastdtw_cpp
     include/fastdtw_cpp/mask.h
     include/fastdtw_cpp/downsampling.h
 
-    src/distances.cpp
-    src/dtw.cpp
-    src/fastdtw.cpp
-    src/path.cpp
-    src/projection.cpp
-    src/projection_idc.cpp
-    src/utils.cpp
-    src/mask.cpp
-    src/downsampling.cpp
+    src/fastdtw_cpp/distances.cpp
+    src/fastdtw_cpp/dtw.cpp
+    src/fastdtw_cpp/fastdtw.cpp
+    src/fastdtw_cpp/path.cpp
+    src/fastdtw_cpp/projection.cpp
+    src/fastdtw_cpp/projection_idc.cpp
+    src/fastdtw_cpp/utils.cpp
+    src/fastdtw_cpp/mask.cpp
+    src/fastdtw_cpp/downsampling.cpp
 
 )
 
-add_executable(fastdtw_cpp_test
-    src/fastdtw_cpp.cpp
+add_executable(fastdtw_cpp_examples
+    src/examples/examples.cpp
 )
-target_link_libraries(fastdtw_cpp_test
+target_link_libraries(fastdtw_cpp_examples
     fastdtw_cpp
 )
 
 
 if(${OpenCV_FOUND} AND ${Boost_FOUND})
-add_executable(fastdtw_path_visual
-    src/path_visual.cpp
+add_executable(fastdtw_cpp_example_visual
+    src/examples/visual_example.cpp
 )
-target_link_libraries(fastdtw_path_visual
+target_link_libraries(fastdtw_cpp_example_visual
     ${OpenCV_LIBRARIES}
     ${Boost_LIBRARIES}
     fastdtw_cpp
