@@ -9,6 +9,7 @@
                   Stand Salvador,Philip Chan"
   </description>
   <maintainer email="richard.hanten@uni-tuebingen.de">Richard Hanten</maintainer>
+  <author email="richard.hanten@uni-tuebingen.de">Richard Hanten</maintainer>
   <license>BSD</license>
   <buildtool_depend>catkin</buildtool_depend>
 
