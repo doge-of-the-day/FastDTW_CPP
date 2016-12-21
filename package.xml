@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>fastdtw_cpp</name>
-  <version>1.0.0</version>
+  <version>0.9.0</version>
   <description>
     FastDTW (fast dynamic time warping) template library for C++ programs.
     Based on the publication:
